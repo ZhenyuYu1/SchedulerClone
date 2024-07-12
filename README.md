@@ -13,6 +13,8 @@ Run `pnpm run dev`
 
 Visit <a href="http://localhost:3000"><strong> Site</strong></a> ·
 
+
+# ORIGINAL INSTRUCTIONS FOR SETTING UP STARTER
 #Attributions
 Schedule Cloner use the SupaNext Starter Kit identified below.
 ![image](https://github.com/michaeltroya/supa-next-starter/assets/38507347/2ea40874-98de-49ec-ab6a-74c816e6ca22)
