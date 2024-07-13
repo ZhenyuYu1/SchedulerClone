@@ -1,4 +1,5 @@
 # Scheduler Clone App
+
 An app that makes it easy to schedule meetings with others.
 
 ##Quick Start
@@ -9,7 +10,6 @@ Run `supabase start`
 Copy `.env.example` to `.env.local` and update `NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321` and update NEXT_PUBLIC_SUPABASE_ANON_KEY from the output of `supabase start`
 
 Run `pnpm run dev`
-
 
 Visit <a href="http://localhost:3000"><strong> Site</strong></a> ·
 
@@ -31,7 +31,6 @@ Schedule Cloner use the SupaNext Starter Kit identified below.
    <img alt="X (formerly Twitter) Follow" src="https://img.shields.io/twitter/follow/michaeltroya_">
   </a>
 </div>
-
 
 <br/>
 
