@@ -132,6 +132,9 @@ importers:
       msw:
         specifier: ^2.1.1
         version: 2.1.1(typescript@5.1.3)
+      pnpm:
+        specifier: ^9.3.0
+        version: 9.5.0
       postcss:
         specifier: 8.4.29
         version: 8.4.29
@@ -2924,6 +2927,11 @@ packages:
   pkg-dir@4.2.0:
     resolution: {integrity: sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==}
     engines: {node: '>=8'}
+
+  pnpm@9.5.0:
+    resolution: {integrity: sha512-FAA2gwEkYY1iSiGHtQ0EKJ1aCH8ybJ7fwMzXM9dsT1LDoxPU/BSHlKKp2BVTAWAE5nQujPhQZwJopzh/wiDJAw==}
+    engines: {node: '>=18.12'}
+    hasBin: true
 
   postcss-import@15.1.0:
     resolution: {integrity: sha512-hpr+J05B2FVYUAXHeK1YyI267J/dDDhMU6B6civm8hSY1jYJnBXxzKDKDswzJmtLHryrjhnDjqqp/49t8FALew==}
@@ -7041,6 +7049,8 @@ snapshots:
   pkg-dir@4.2.0:
     dependencies:
       find-up: 4.1.0
+
+  pnpm@9.5.0: {}
 
   postcss-import@15.1.0(postcss@8.4.31):
     dependencies:
