@@ -53,6 +53,16 @@ export default function Page() {
 export default function SignUpUserSteps() {
   return (
     <ol className="flex flex-col gap-6">
+      <div className="form-control">
+        <label className="label cursor-pointer">
+          <span className="label-text">Install DaisyUI</span>
+          <input
+            type="checkbox"
+            defaultChecked
+            className="checkbox-primary checkbox"
+          />
+        </label>
+      </div>
       <Step title="Sign up your first user">
         <p>
           Head over to the{' '}
