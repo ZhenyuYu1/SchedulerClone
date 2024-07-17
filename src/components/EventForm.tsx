@@ -1,6 +1,15 @@
 'use client'
 import React from 'react'
 
+// Generate hourly time options array used for
+// EarliestTime and LatestTime dropdowns
+const times: string[] = []
+for (let hour = 1; hour <= 24; hour++) {
+  const suffix = hour <= 12 ? 'AM' : 'PM'
+  const displayHour = hour <= 12 ? hour : hour - 12
+  times.push(`${displayHour}:00 ${suffix}`)
+}
+
 interface EventFormProps {
   title: string
   setTitle: React.Dispatch<React.SetStateAction<string>>
@@ -36,12 +45,26 @@ const EventForm = ({
   setTimezone,
   handleSubmit,
 }: EventFormProps) => {
+  // Function to handle selected daysOfWeek array based on checkbox selection and deselection
+  const handleSelectedDayOfWeek = (day: string) => {
+    const index = daysOfWeek.indexOf(day)
+    if (index === -1) {
+      // Day is not in the array, add it
+      setDaysOfWeek([...daysOfWeek, day])
+    } else {
+      // Day is already in the array, remove it
+      const updatedDays = [...daysOfWeek]
+      updatedDays.splice(index, 1)
+      setDaysOfWeek(updatedDays)
+    }
+  }
+
   return (
     <div className="flex w-full flex-col md:flex-row">
-      <div //Left side container
+      <section //Left side container
         className="h-full w-full p-10 md:w-2/5"
       >
-        <form //Form to enter Event datat (Title, Description...etc)
+        <form //Form to enter Event data (Title, Description...etc)
           className="flex w-full flex-col gap-6"
         >
           <input //Event Title text input
@@ -75,29 +98,29 @@ const EventForm = ({
               onChange={(e) => setEarliestTime(e.target.value)}
               className="select w-full max-w-xl border-gray-300 bg-white text-base font-normal"
             >
-              <option disabled selected>
+              <option disabled value="">
                 Earliest Time
               </option>
-              <option>9:00 AM</option>
-              <option>5:00 PM</option>
+              {times.map((time) => (
+                <option key={time}>{time}</option>
+              ))}
             </select>
-
             <p //"to"
               className="text-normal font-normal text-gray-400"
             >
               to
             </p>
-
             <select //LatestTime dropdown
               value={latestTime}
               onChange={(e) => setLatestTime(e.target.value)}
               className="select w-full max-w-xl border-gray-300 bg-white text-base font-normal"
             >
-              <option disabled selected>
+              <option disabled value="">
                 Latest Time
               </option>
-              <option>9:00 AM</option>
-              <option>5:00 PM</option>
+              {times.map((time) => (
+                <option key={time}>{time}</option>
+              ))}
             </select>
           </div>
 
@@ -109,42 +132,56 @@ const EventForm = ({
               type="checkbox"
               name="options"
               aria-label="Mon"
+              checked={daysOfWeek.includes('Mon')}
+              onChange={() => handleSelectedDayOfWeek('Mon')}
             />
             <input
               className="btn join-item border-gray-300 bg-white"
               type="checkbox"
               name="options"
               aria-label="Tue"
+              checked={daysOfWeek.includes('Tue')}
+              onChange={() => handleSelectedDayOfWeek('Tue')}
             />
             <input
               className="btn join-item border-gray-300 bg-white"
               type="checkbox"
               name="options"
               aria-label="Wed"
+              checked={daysOfWeek.includes('Wed')}
+              onChange={() => handleSelectedDayOfWeek('Wed')}
             />
             <input
               className="btn join-item border-gray-300 bg-white"
               type="checkbox"
               name="options"
               aria-label="Thu"
+              checked={daysOfWeek.includes('Thu')}
+              onChange={() => handleSelectedDayOfWeek('Thu')}
             />
             <input
               className="btn join-item border-gray-300 bg-white"
               type="checkbox"
               name="options"
               aria-label="Fri"
+              checked={daysOfWeek.includes('Fri')}
+              onChange={() => handleSelectedDayOfWeek('Fri')}
             />
             <input
               className="btn join-item border-gray-300 bg-white"
               type="checkbox"
               name="options"
               aria-label="Sat"
+              checked={daysOfWeek.includes('Sat')}
+              onChange={() => handleSelectedDayOfWeek('Sat')}
             />
             <input
               className="btn join-item border-gray-300 bg-white"
               type="checkbox"
               name="options"
               aria-label="Sun"
+              checked={daysOfWeek.includes('Sun')}
+              onChange={() => handleSelectedDayOfWeek('Sun')}
             />
           </div>
 
@@ -153,11 +190,15 @@ const EventForm = ({
             onChange={(e) => setTimezone(e.target.value)}
             className="select w-full border-gray-300 bg-white text-base font-normal"
           >
-            <option disabled selected>
-              Time zone
+            <option disabled value="">
+              Timezone
             </option>
             <option>PST (Pacific Standard Time)</option>
             <option>EST (Eastern Standard Time)</option>
+            <option>GMT (Greenwich Mean Time)</option>
+            <option>CET (Central European Time)</option>
+            <option>IST (Indian Standard Time)</option>
+            <option>JST (Japan Standard Time)</option>
           </select>
         </form>
 
@@ -167,13 +208,13 @@ const EventForm = ({
         >
           Create Event
         </button>
-      </div>
+      </section>
 
-      <div //Right side container
+      <section //Right side container
         className="flex w-full bg-green-200 p-10 md:w-3/5"
       >
         <p>Right Panel</p>
-      </div>
+      </section>
     </div>
   )
 }
