@@ -1,38 +1,46 @@
 'use client'
 
 import { createBrowserClient } from '@/utils/supabase'
+import { randomUUID, UUID } from 'crypto'
 import { useEffect, useState } from 'react'
 
 export default function Page() {
-  const [users, setUsers] = useState<any[] | null>(null)
+  const [username, setUsername] = useState('')
   const [events, setEvents] = useState<any[] | null>(null)
-  const [userData, setUserData] = useState({ name: '' })
-  const [eventData, setEventData] = useState({ name: '' })
-  const [message, setMessage] = useState<string>('')
+  const [eventData, setEventData] = useState({
+    title: '',
+    description: '',
+    startTime: '',
+    endTime: '',
+    location: '',
+    timezone: '',
+    mode: '',
+    config: JSON,
+    creator: '',
+  })
+  const [submitMessage, setSubmitMessage] = useState('')
   const supabase = createBrowserClient()
 
   useEffect(() => {
-    const getData = async () => {
-      const { data: userData, error: userFetchError } = await supabase
-        .from('Users')
-        .select()
-      const { data: eventData, error: eventsFetchError } = await supabase
+    const username = localStorage.getItem('username')
+    if (username) {
+      setUsername(username)
+    }
+    const getMyEvents = async (creatorId: UUID) => {
+      const { data, error } = await supabase
         .from('Events')
         .select()
+        .eq('creator', creatorId)
 
-      if (!userFetchError) {
-        setUsers(userData)
-      }
-
-      if (!eventsFetchError) {
-        setEvents(eventData)
+      if (!error) {
+        setEvents(data)
       } else {
-        console.error(eventsFetchError)
+        console.error(error)
       }
     }
 
-    getData()
-  }, [])
+    getMyEvents('9e33186f-95db-4385-a974-ee38c8e07547')
+  }, [events])
 
   const insertEvent = (
     title: string,
@@ -43,9 +51,9 @@ export default function Page() {
     timezone: string,
     mode: string,
     config: JSON,
-    creator: string,
+    creator: UUID,
   ) => {
-    fetch('/api/events', {
+    fetch('/api/events/create', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -62,72 +70,147 @@ export default function Page() {
         creator: creator,
       }),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.ok) {
+          setSubmitMessage('Event submitted successfully')
+        } else {
+          setSubmitMessage('Error submitting event')
+        }
+        return response.json()
+      })
       .then((data) => {
-        setMessage(data.message)
+        setEvents((prevEvents) => [...(prevEvents || []), data])
       })
       .catch((error) => {
-        console.error('Error:', error)
+        setSubmitMessage('Error submitting event')
       })
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setUserData((prevData) => ({ ...prevData, [name]: value }))
+    setEventData({
+      ...eventData,
+      [e.target.name]: e.target.value,
+    })
+  }
+
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value)
+  }
+
+  const handleUsernameSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    // store username in local storage
+    localStorage.setItem('username', username)
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    // insert with random UUID for now
     insertEvent(
-      'test',
-      'test desc',
-      '2022-01-01T00:00:00Z',
-      '2022-01-01T01:00:00Z',
-      'test location',
-      'UTC',
-      'weekly',
+      eventData.title,
+      eventData.description,
+      eventData.startTime,
+      eventData.endTime,
+      eventData.location,
+      eventData.timezone,
+      eventData.mode,
       JSON.parse(
-        '{"monday": true, "tuesday": true, "wednesday": true, "thursday": true, "friday": true, "saturday": false, "sunday": false}',
+        '{"days": ["2024-07-17", "2024-07-18", "2024-07-19", "2024-07-20", "2024-07-21", "2024-07-22", "2024-07-23"]}',
       ),
-      '9e33186f-95db-4385-a974-ee38c8e07547',
+      '9e33186f-95db-4385-a974-ee38c8e07547', // random UUID,
     )
   }
 
   return (
     <>
       <div>
-        {users ? (
-          <div>
-            {users.map((user, index) => (
-              <p key={index}>{user.name}</p>
-            ))}
-          </div>
-        ) : (
-          'Loading users...'
-        )}
         <form onSubmit={handleSubmit}>
-          <label>
-            Name:
-            <input
-              type="text"
-              name="name"
-              value={userData.name}
-              onChange={handleChange}
-            />
-          </label>
+          <input
+            type="text"
+            name="title"
+            placeholder="Title"
+            onChange={handleChange}
+          />
+          <br />
+          <input
+            type="text"
+            name="description"
+            placeholder="Description"
+            onChange={handleChange}
+          />
+          <br />
+          <input
+            type="datetime-local"
+            name="startTime"
+            placeholder="Start Time"
+            onChange={handleChange}
+          />
+          <br />
+          <input
+            type="datetime-local"
+            name="endTime"
+            placeholder="End Time"
+            onChange={handleChange}
+          />
+          <br />
+          <input
+            type="text"
+            name="location"
+            placeholder="Location"
+            onChange={handleChange}
+          />
+          <br />
+          <input
+            type="text"
+            name="timezone"
+            placeholder="Timezone"
+            onChange={handleChange}
+          />
+          <br />
+          <input
+            type="text"
+            name="mode"
+            placeholder="Mode"
+            onChange={handleChange}
+          />
           <br />
           <button type="submit">Submit</button>
         </form>
       </div>
+      {submitMessage && <p>{submitMessage}</p>}
 
-      {message && <p>{message}</p>}
+      <p>Username: {username}</p>
+      {!localStorage.getItem('username') && (
+        <form onSubmit={handleUsernameSubmit}>
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            onChange={handleUsernameChange}
+          />
+          <br />
+          <button type="submit">Submit</button>
+        </form>
+      )}
+
+      <button
+        onClick={() => {
+          localStorage.removeItem('username')
+          setUsername('')
+        }}
+      >
+        Clear Username
+      </button>
 
       {events ? (
         <div>
           {events.map((event, index) => (
-            <p
-              key={index}
-            >{`Title: ${event.title}, Description: ${event.description}, StartTime: ${event.startTime}, EndTime: ${event.endTime}, Location: ${event.location}, Timezone: ${event.timezone}, Weekly/Specific: ${event.isWeekly}, Config: ${JSON.stringify(event.config)}, Creator: ${event.creator}`}</p>
+            <div key={index}>
+              <p
+                key={index}
+              >{`Title: ${event.title}, Description: ${event.description}, StartTime: ${event.startTime}, EndTime: ${event.endTime}, Location: ${event.location}, Timezone: ${event.timezone}, Weekly/Specific: ${event.mode}, Config: ${JSON.stringify(event.config)}, Creator: ${event.creator}`}</p>
+              <br />
+            </div>
           ))}
         </div>
       ) : (
