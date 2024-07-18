@@ -68,7 +68,7 @@ const Home = () => {
             <h1 className="text-2xl font-extrabold font-black">My Events</h1> {/*heading for MY Events*/}
             <button className="btn btn-primary ml-6">+ New Event</button> {/*button to add new event with primary styling and margin left 6*/}
           </div>
-          <div className="grid grid-cols-2 gap-4"> {/*grid container with 2 columns and gap between the items*/}
+          <div className="grid grid-cols-3 gap-4"> {/*grid container with 2 columns and gap between the items*/}
             <div className="shadow-lg p-4 bg-white rounded-md h-48 flex flex-col justify-between"> {/*box with shadow, padding 4, white background, with rounded corners, fixed height of 48, flex column layout with even distribution*/}
               <div>
                 <h2 className="text-lg font-bold">Event 1</h2> {/*event title with large text and a bold font*/}
