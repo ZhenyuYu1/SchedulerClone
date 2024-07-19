@@ -1,26 +1,48 @@
+'use client'
+
 import AuthButton from '@/components/AuthButton'
 import ConnectSupabaseSteps from '@/components/ConnectSupabaseSteps'
 import SignUpUserSteps from '@/components/SignUpUserSteps'
 import Header from '@/components/Header'
-import { cookies } from 'next/headers'
-import { createServerClient } from '@/utils/supabase'
+import { createServerClient, createBrowserClient } from '@/utils/supabase'
+import EventCard from '@/components/EventCard'
 import ThemeToggle from '@/components/ThemeToggle'
+import { useEffect, useState } from 'react'
+import { UUID } from 'crypto'
+import Link from 'next/link'
 
-export default async function Index() {
-  const cookieStore = cookies()
+export default function Index() {
+  const [events, setEvents] = useState<any[] | null>(null)
 
-  const canInitSupabaseClient = () => {
-    // This function is just for the interactive tutorial.
-    // Feel free to remove it once you have Supabase connected.
-    try {
-      createServerClient(cookieStore)
-      return true
-    } catch (e) {
-      return false
+  useEffect(() => {
+    const getMyEvents = async (creatorId: UUID) => {
+      fetch('/api/events', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            return response.json().then((err) => {
+              throw new Error(err.message)
+            })
+          }
+          return response.json()
+        })
+        .then((data) => {
+          const dataFiltered = data.filter(
+            (event: any) => event.creator === creatorId,
+          )
+          setEvents(dataFiltered)
+        })
+        .catch((error) => {
+          console.error('Error:', error.message)
+        })
     }
-  }
 
-  const isSupabaseConnected = canInitSupabaseClient()
+    getMyEvents('9e33186f-95db-4385-a974-ee38c8e07547')
+  }, [events])
 
   return (
     <div className="container mx-auto p-4">
@@ -37,51 +59,23 @@ export default async function Index() {
             {/*flex container to align heading and button horizontally to have them closer together*/}
             <h1 className="text-2xl font-black font-extrabold">My Events</h1>{' '}
             {/*heading for MY Events*/}
-            <button className="btn btn-primary ml-6">+ New Event</button>{' '}
+            <Link href="/create-event">
+              <button className="btn btn-primary ml-6">+ New Event</button>{' '}
+            </Link>
             {/*button to add new event with primary styling and margin left 6*/}
           </div>
           <div className="grid grid-cols-3 gap-4">
             {' '}
             {/*grid container with 2 columns and gap between the items*/}
-            <div className="flex h-48 flex-col justify-between rounded-md bg-white p-4 shadow-lg">
-              {' '}
-              {/*box with shadow, padding 4, white background, with rounded corners, fixed height of 48, flex column layout with even distribution*/}
-              <div>
-                <h2 className="text-lg font-bold">Event 1</h2>{' '}
-                {/*event title with large text and a bold font*/}
-                <p>01/01/2024</p> {/*event date*/}
-              </div>
-            </div>
-            <div className="flex h-48 flex-col justify-between rounded-md bg-white p-4 shadow-lg">
-              <div>
-                <h2 className="text-lg font-bold">Event 2</h2>
-                <p>02/02/2024</p>
-              </div>
-            </div>
-            <div className="flex h-48 flex-col justify-between rounded-md bg-white p-4 shadow-lg">
-              <div>
-                <h2 className="text-lg font-bold">Event 3</h2>
-                <p>03/03/2024</p>
-              </div>
-            </div>
-            <div className="flex h-48 flex-col justify-between rounded-md bg-white p-4 shadow-lg">
-              <div>
-                <h2 className="text-lg font-bold">Event 4</h2>
-                <p>04/04/2024</p>
-              </div>
-            </div>
-            <div className="flex h-48 flex-col justify-between rounded-md bg-white p-4 shadow-lg">
-              <div>
-                <h2 className="text-lg font-bold">Event 5</h2>
-                <p>05/05/2024</p>
-              </div>
-            </div>
-            <div className="flex h-48 flex-col justify-between rounded-md bg-white p-4 shadow-lg">
-              <div>
-                <h2 className="text-lg font-bold">Event 6</h2>
-                <p>06/06/2024</p>
-              </div>
-            </div>
+            {events &&
+              events.map((event) => (
+                <EventCard
+                  title={event.title}
+                  startTime={event.startTime}
+                  endTime={event.endTime}
+                  key={event.id}
+                />
+              ))}{' '}
           </div>{' '}
           {/*div to close grid container*/}
         </div>{' '}

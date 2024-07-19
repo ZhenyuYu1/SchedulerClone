@@ -1,7 +1,7 @@
 'use client'
 
 import { createBrowserClient } from '@/utils/supabase'
-import { randomUUID, UUID } from 'crypto'
+import { UUID } from 'crypto'
 import { useEffect, useState } from 'react'
 
 export default function Page() {

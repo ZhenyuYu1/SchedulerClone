@@ -74,15 +74,7 @@ export async function POST(request: Request) {
 
   // if mode is weekly, check if each day is a true/false boolean
   if (body.mode == 'weekly') {
-    const days = [
-      'monday',
-      'tuesday',
-      'wednesday',
-      'thursday',
-      'friday',
-      'saturday',
-      'sunday',
-    ]
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     for (let i = 0; i < days.length; i++) {
       if (typeof body.config[days[i]] !== 'boolean') {
         return NextResponse.json(
@@ -108,9 +100,8 @@ export async function POST(request: Request) {
   const { data, error } = await supabase.from('Events').insert([body]).select()
 
   if (error) {
-    console.log('error', error)
     return NextResponse.json(
-      { message: 'Error inserting event: ' + error },
+      { message: 'Error inserting event: ' + error.message },
       { status: 400 },
     )
   }
