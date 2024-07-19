@@ -2,7 +2,6 @@
 import { useState } from 'react'
 
 import EventForm from '@/components/EventForm'
-import Board from '@/components/Board'
 
 export default function CreateEvent() {
   const [title, setTitle] = useState('')
