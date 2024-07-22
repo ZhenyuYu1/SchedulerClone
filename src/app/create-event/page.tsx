@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { UUID } from 'crypto'
+import { days, modeOptions } from '@/utils/dateUtils'
 
 import EventForm from '@/components/EventForm'
 
@@ -10,7 +11,9 @@ export default function CreateEvent() {
   const [location, setLocation] = useState('')
   const [earliestTime, setEarliestTime] = useState('')
   const [latestTime, setLatestTime] = useState('')
-  const [daysOfWeek, setDaysOfWeek] = useState<string[]>([])
+  const [mode, setMode] = useState('')
+  const [config, setConfig] = useState<JSON | null>(null)
+  const [daysOfWeek, setDaysOfWeek] = useState<string[] | null>([])
   const [timezone, setTimezone] = useState('')
 
   const insertEvent = (
@@ -63,7 +66,8 @@ export default function CreateEvent() {
     console.log(`Location: ${location}`)
     console.log(`Earliest Time: ${earliestTime}`)
     console.log(`Latest Time: ${latestTime}`)
-    console.log(`Days of Week: ${daysOfWeek}`)
+    console.log(`Mode: ${mode}`)
+    console.log(`DaysOfWeek: ${daysOfWeek}`)
     console.log(`Timezone: ${timezone}`)
 
     const daysOfWeekJSON: { [key: string]: boolean } = {
@@ -76,7 +80,7 @@ export default function CreateEvent() {
       Sun: false,
     }
 
-    if (daysOfWeek.length > 0) {
+    if (daysOfWeek) {
       daysOfWeek.forEach((day) => {
         if (daysOfWeekJSON.hasOwnProperty(day)) {
           daysOfWeekJSON[day] = true
@@ -91,10 +95,10 @@ export default function CreateEvent() {
       latestTime,
       location,
       timezone,
-      daysOfWeek.length > 0 ? 'weekly' : 'specific',
-      daysOfWeek.length > 0
+      mode,
+      mode === 'weekly'
         ? daysOfWeekJSON
-        : JSON.parse('{"days": ["2024-01-01"]}'),
+        : JSON.parse('{"days": ["2024-01-01"]}'), // filler for specific mode now because no calendar yet
       '9e33186f-95db-4385-a974-ee38c8e07547',
     )
   }
@@ -111,6 +115,8 @@ export default function CreateEvent() {
       setEarliestTime={setEarliestTime}
       latestTime={latestTime}
       setLatestTime={setLatestTime}
+      mode={mode}
+      setMode={setMode}
       daysOfWeek={daysOfWeek}
       setDaysOfWeek={setDaysOfWeek}
       timezone={timezone}

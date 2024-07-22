@@ -21,8 +21,10 @@ interface EventFormProps {
   setEarliestTime: React.Dispatch<React.SetStateAction<string>>
   latestTime: string
   setLatestTime: React.Dispatch<React.SetStateAction<string>>
-  daysOfWeek: string[]
-  setDaysOfWeek: React.Dispatch<React.SetStateAction<string[]>>
+  mode: string
+  setMode: React.Dispatch<React.SetStateAction<string>>
+  daysOfWeek: string[] | null
+  setDaysOfWeek: React.Dispatch<React.SetStateAction<string[] | null>>
   timezone: string
   setTimezone: React.Dispatch<React.SetStateAction<string>>
   handleSubmit: () => void
@@ -39,6 +41,8 @@ const EventForm = ({
   setEarliestTime,
   latestTime,
   setLatestTime,
+  mode,
+  setMode,
   daysOfWeek,
   setDaysOfWeek,
   timezone,
@@ -47,6 +51,8 @@ const EventForm = ({
 }: EventFormProps) => {
   // Function to handle selected daysOfWeek array based on checkbox selection and deselection
   const handleSelectedDayOfWeek = (day: string) => {
+    setMode('weekly')
+    daysOfWeek = daysOfWeek || []
     const index = daysOfWeek.indexOf(day)
     if (index === -1) {
       // Day is not in the array, add it
@@ -132,7 +138,7 @@ const EventForm = ({
               type="checkbox"
               name="options"
               aria-label="Mon"
-              checked={daysOfWeek.includes('Mon')}
+              checked={daysOfWeek?.includes('Mon')}
               onChange={() => handleSelectedDayOfWeek('Mon')}
             />
             <input
@@ -140,7 +146,7 @@ const EventForm = ({
               type="checkbox"
               name="options"
               aria-label="Tue"
-              checked={daysOfWeek.includes('Tue')}
+              checked={daysOfWeek?.includes('Tue')}
               onChange={() => handleSelectedDayOfWeek('Tue')}
             />
             <input
@@ -148,7 +154,7 @@ const EventForm = ({
               type="checkbox"
               name="options"
               aria-label="Wed"
-              checked={daysOfWeek.includes('Wed')}
+              checked={daysOfWeek?.includes('Wed')}
               onChange={() => handleSelectedDayOfWeek('Wed')}
             />
             <input
@@ -156,7 +162,7 @@ const EventForm = ({
               type="checkbox"
               name="options"
               aria-label="Thu"
-              checked={daysOfWeek.includes('Thu')}
+              checked={daysOfWeek?.includes('Thu')}
               onChange={() => handleSelectedDayOfWeek('Thu')}
             />
             <input
@@ -164,7 +170,7 @@ const EventForm = ({
               type="checkbox"
               name="options"
               aria-label="Fri"
-              checked={daysOfWeek.includes('Fri')}
+              checked={daysOfWeek?.includes('Fri')}
               onChange={() => handleSelectedDayOfWeek('Fri')}
             />
             <input
@@ -172,7 +178,7 @@ const EventForm = ({
               type="checkbox"
               name="options"
               aria-label="Sat"
-              checked={daysOfWeek.includes('Sat')}
+              checked={daysOfWeek?.includes('Sat')}
               onChange={() => handleSelectedDayOfWeek('Sat')}
             />
             <input
@@ -180,7 +186,7 @@ const EventForm = ({
               type="checkbox"
               name="options"
               aria-label="Sun"
-              checked={daysOfWeek.includes('Sun')}
+              checked={daysOfWeek?.includes('Sun')}
               onChange={() => handleSelectedDayOfWeek('Sun')}
             />
           </div>

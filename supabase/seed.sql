@@ -1,20 +1,20 @@
 insert into Users
-  (name)
+  (id, name)
 values
-  ('Sutton Gibson'),
-  ('Tyler Williams'),
-  ('Bryson Glenn');
+  ('00569fb6-acee-4edc-93c0-09ac8b814daf', 'Sutton Gibson'),
+  ('fb511b72-8d6d-450c-be69-dd5e82dfda5b', 'Tyler Williams'),
+  ('9e33186f-95db-4385-a974-ee38c8e07547', 'Bryson Glenn');
 
 insert into Events
-  (title, descript, startTime, endTime, loc, timezone, mode, config)
+  (title, descript, startTime, endTime, loc, timezone, mode, config, creator)
 values
-  ('Bowling', 'Bowling event', '2024-07-12T23:11:25.000Z', '2024-07-12T23:11:25.000Z', 'Bowling alley', 'PST', 'weekly', ('{"monday": "true"}')),
-  ('Reading Club', 'Reading club meeting', '2024-07-12T23:11:25.000Z', '2024-07-12T23:11:25.000Z', 'Library', 'UTC', 'specific', ('{"days": ["July 8, 2024", "July 10, 2024"]}')),
-  ('Track Meet', 'Track', '2024-07-12T23:11:25.000Z', '2024-07-12T23:11:25.000Z', 'Track field', 'EST', 'weekly', ('{"monday": "true"}'));
+  ('Bowling', 'Bowling event', '2024-07-12T23:11:25.000Z', '2024-07-12T23:11:25.000Z', 'Bowling alley', 'PST', 'weekly', ('{"monday": "true"}'), '00569fb6-acee-4edc-93c0-09ac8b814daf'),
+  ('Reading Club', 'Reading club meeting', '2024-07-12T23:11:25.000Z', '2024-07-12T23:11:25.000Z', 'Library', 'UTC', 'specific', ('{"days": ["July 8, 2024", "July 10, 2024"]}'), '9e33186f-95db-4385-a974-ee38c8e07547'),
+  ('Track Meet', 'Track', '2024-07-12T23:11:25.000Z', '2024-07-12T23:11:25.000Z', 'Track field', 'EST', 'weekly', ('{"monday": "true"}'), '9e33186f-95db-4385-a974-ee38c8e07547');
 
 insert into Attendees
-  (eventID)
+  (eventID, attendee)
 values
-  (1),
-  (2),
-  (3);
+  (1, '9e33186f-95db-4385-a974-ee38c8e07547'),
+  (2, '9e33186f-95db-4385-a974-ee38c8e07547'),
+  (3, '9e33186f-95db-4385-a974-ee38c8e07547');

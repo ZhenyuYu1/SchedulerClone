@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     )
   } else if (body.name.length > 40) {
     return NextResponse.json(
-      { message: 'Name must be less than 40 characters' },
+      { message: 'Name must be less than or equal to 40 characters' },
       { status: 400 },
     )
   } else if (typeof body.name != 'string') {
