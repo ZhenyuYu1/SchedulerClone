@@ -38,7 +38,7 @@ export default function Header() {
           Next.js
         </a>
       </p>
-      <div className="my-8 w-full bg-gradient-to-r from-transparent via-foreground/10 to-transparent p-[1px]" />
+      <div className="via-foreground/10 my-8 w-full bg-gradient-to-r from-transparent to-transparent p-[1px]" />
     </div>
   )
 }

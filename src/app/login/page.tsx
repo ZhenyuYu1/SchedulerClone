@@ -56,7 +56,7 @@ export default function Login({
     <div className="flex w-full flex-1 flex-col justify-center gap-2 px-8 sm:max-w-md">
       <Link
         href="/"
-        className="bg-btn-background hover:bg-btn-background-hover group absolute left-8 top-8 flex items-center rounded-md px-4 py-2 text-sm text-foreground no-underline"
+        className="bg-btn-background hover:bg-btn-background-hover text-foreground group absolute left-8 top-8 flex items-center rounded-md px-4 py-2 text-sm no-underline"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -76,7 +76,7 @@ export default function Login({
       </Link>
 
       <form
-        className="flex w-full flex-1 flex-col justify-center gap-2 text-foreground animate-in"
+        className="text-foreground flex w-full flex-1 flex-col justify-center gap-2 animate-in"
         action={signIn}
       >
         <label className="text-md" htmlFor="email">
@@ -98,17 +98,17 @@ export default function Login({
           placeholder="••••••••"
           required
         />
-        <button className="mb-2 rounded-md bg-green-700 px-4 py-2 text-foreground">
+        <button className="text-foreground mb-2 rounded-md bg-green-700 px-4 py-2">
           Sign In
         </button>
         <button
           formAction={signUp}
-          className="mb-2 rounded-md border border-foreground/20 px-4 py-2 text-foreground"
+          className="border-foreground/20 text-foreground mb-2 rounded-md border px-4 py-2"
         >
           Sign Up
         </button>
         {searchParams?.message && (
-          <p className="mt-4 bg-foreground/10 p-4 text-center text-foreground">
+          <p className="bg-foreground/10 text-foreground mt-4 p-4 text-center">
             {searchParams.message}
           </p>
         )}
