@@ -1,57 +1,88 @@
+'use client'
+
 import AuthButton from '@/components/AuthButton'
 import ConnectSupabaseSteps from '@/components/ConnectSupabaseSteps'
 import SignUpUserSteps from '@/components/SignUpUserSteps'
 import Header from '@/components/Header'
-import { cookies } from 'next/headers'
-import { createServerClient } from '@/utils/supabase'
+import { createServerClient, createBrowserClient } from '@/utils/supabase'
+import EventCard from '@/components/EventCard'
 import ThemeToggle from '@/components/ThemeToggle'
+import { useEffect, useState } from 'react'
+import { UUID } from 'crypto'
+import Link from 'next/link'
 
-export default async function Index() {
-  const cookieStore = cookies()
+export default function Index() {
+  const [events, setEvents] = useState<any[]>([])
 
-  const canInitSupabaseClient = () => {
-    // This function is just for the interactive tutorial.
-    // Feel free to remove it once you have Supabase connected.
-    try {
-      createServerClient(cookieStore)
-      return true
-    } catch (e) {
-      return false
+  useEffect(() => {
+    const getMyEvents = async (creatorId: UUID) => {
+      fetch(`/api/events?creatorId=${creatorId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            return response.json().then((err) => {
+              throw new Error(err.message)
+            })
+          }
+          return response.json()
+        })
+        .then((data) => {
+          console.log(data)
+          setEvents(data)
+        })
+        .catch((error) => {
+          console.error('Error:', error.message)
+        })
     }
-  }
 
-  const isSupabaseConnected = canInitSupabaseClient()
+    getMyEvents('9e33186f-95db-4385-a974-ee38c8e07547') // filler UUID for now until local storage is setup
+  }, [])
 
   return (
-    <div className="flex w-full flex-1 flex-col items-center gap-20">
-      <nav className="flex h-16 w-full justify-center border-b border-b-foreground/10">
-        <div className="flex w-full max-w-4xl items-center justify-between p-3 text-sm">
-          {isSupabaseConnected && <AuthButton />}
+    <div className="container mx-auto p-4">
+      {' '}
+      {/*main container with max width auto center and padding 4*/}
+      <div className="flex">
+        {' '}
+        {/*flex container to arrange child elements in a row*/}
+        <div className="w-2/3 p-4">
+          {' '}
+          {/*container for left side 2/3 of the width and has padding 4*/}
+          <div className="mb-4 flex items-center justify-start">
+            {' '}
+            {/*flex container to align heading and button horizontally to have them closer together*/}
+            <h1 className="text-2xl font-black font-extrabold">My Events</h1>{' '}
+            {/*heading for MY Events*/}
+            <Link href="/create-event">
+              <button className="btn btn-primary ml-6">+ New Event</button>{' '}
+            </Link>
+            {/*button to add new event with primary styling and margin left 6*/}
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            {' '}
+            {/*grid container with 2 columns and gap between the items*/}
+            {events.length > 0 &&
+              events.map((event) => (
+                <EventCard
+                  title={event.title}
+                  starttime={event.starttime}
+                  endtime={event.endtime}
+                  key={event.id}
+                />
+              ))}{' '}
+          </div>{' '}
+          {/*div to close grid container*/}
+        </div>{' '}
+        {/*div to close left side container*/}
+        <div className="w-1/3 bg-white p-4">
+          {/*container for right side 1/3 of the width and has padding 4 background white and is left blank on prupose (will add later)*/}
         </div>
-      </nav>
-
-      <div className="flex max-w-4xl flex-1 flex-col gap-20 px-3">
-        <Header />
-        <main className="flex flex-1 flex-col gap-6">
-          <h2 className="mb-4 text-4xl font-bold">Next steps</h2>
-          {isSupabaseConnected ? <SignUpUserSteps /> : <ConnectSupabaseSteps />}
-        </main>
-      </div>
-
-      <footer className="w-full justify-center border-t border-t-foreground/10 p-8 text-center text-xs">
-        <p className="mb-6">
-          Powered by{' '}
-          <a
-            href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-            target="_blank"
-            className="font-bold hover:underline"
-            rel="noreferrer"
-          >
-            Supabase
-          </a>
-        </p>
-        <ThemeToggle />
-      </footer>
+      </div>{' '}
+      {/*div to close flex container*/}
     </div>
   )
 }
