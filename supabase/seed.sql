@@ -6,7 +6,7 @@ values
   ('9e33186f-95db-4385-a974-ee38c8e07547', 'Bryson Glenn');
 
 insert into Events
-  (title, description, startTime, endTime, location, timezone, mode, config, creator)
+  (title, description, starttime, endtime, location, timezone, mode, config, creator)
 values
   (
   'Bowling', 

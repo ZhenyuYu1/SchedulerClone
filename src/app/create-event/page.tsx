@@ -19,8 +19,8 @@ export default function CreateEvent() {
   const insertEvent = (
     title: string,
     description: string,
-    startTime: string,
-    endTime: string,
+    starttime: string,
+    endtime: string,
     location: string,
     timezone: string,
     mode: string,
@@ -35,8 +35,8 @@ export default function CreateEvent() {
       body: JSON.stringify({
         title: title,
         description: description,
-        startTime: startTime,
-        endTime: endTime,
+        starttime: starttime,
+        endtime: endtime,
         location: location,
         timezone: timezone,
         mode: mode,
