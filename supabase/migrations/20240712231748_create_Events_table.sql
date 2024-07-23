@@ -2,10 +2,10 @@ create table
 Events (
 id uuid primary key default gen_random_uuid(),
 title text,
-descript text,
+description text,
 startTime text,
 endTime text,
-loc text,
+location text,
 timezone text,
 mode text,
 config json,

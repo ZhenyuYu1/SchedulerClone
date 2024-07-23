@@ -12,7 +12,7 @@ import { UUID } from 'crypto'
 import Link from 'next/link'
 
 export default function Index() {
-  const [events, setEvents] = useState<any[] | null>(null)
+  const [events, setEvents] = useState<any[]>([])
 
   useEffect(() => {
     const getMyEvents = async (creatorId: UUID) => {
@@ -65,7 +65,7 @@ export default function Index() {
           <div className="grid grid-cols-3 gap-4">
             {' '}
             {/*grid container with 2 columns and gap between the items*/}
-            {events &&
+            {events.length > 0 &&
               events.map((event) => (
                 <EventCard
                   title={event.title}
