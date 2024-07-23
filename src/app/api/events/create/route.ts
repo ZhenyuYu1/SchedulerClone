@@ -9,15 +9,15 @@ export async function POST(request: Request) {
   const body = await request.json()
 
   // input validation
-  // UUID, title, description, startTime, endTime, location, timezone, mode, config, creator
+  // UUID, title, description, starttime, endtime, location, timezone, mode, config, creator
   if (!body.title) {
     return NextResponse.json({ message: 'Title is required' }, { status: 400 })
-  } else if (!body.startTime) {
+  } else if (!body.starttime) {
     return NextResponse.json(
       { message: 'Start Time is required' },
       { status: 400 },
     )
-  } else if (!body.endTime) {
+  } else if (!body.endtime) {
     return NextResponse.json(
       { message: 'End Time is required' },
       { status: 400 },
@@ -72,7 +72,7 @@ export async function POST(request: Request) {
     )
   }
 
-  if (new Date(body.startTime).getTime() > new Date(body.endTime).getTime()) {
+  if (new Date(body.starttime).getTime() > new Date(body.endtime).getTime()) {
     return NextResponse.json(
       { message: 'Start Time must be before End Time' },
       { status: 400 },
