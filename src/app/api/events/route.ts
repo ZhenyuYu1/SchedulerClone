@@ -11,7 +11,7 @@ export async function GET(request: Request) {
   const creatorId = url.searchParams.get('creatorId')
 
   const { data, error } = await supabase
-    .from('Events')
+    .from('events')
     .select()
     .eq('creator', creatorId)
 
