@@ -1,20 +1,20 @@
 interface EventCardProps {
   title: string
-  startTime: string
-  endTime: string
+  starttime: string
+  endtime: string
 }
 
 export default function EventCard({
   title,
-  startTime,
-  endTime,
+  starttime,
+  endtime,
 }: EventCardProps) {
   return (
     <div className="flex h-48 flex-col justify-between rounded-md bg-white p-4 shadow-lg">
       <div>
         <h2 className="text-lg font-bold">{title}</h2>
-        <p>Start Time: {startTime}</p>
-        <p>End Time: {endTime}</p>
+        <p>Start Time: {starttime}</p>
+        <p>End Time: {endtime}</p>
       </div>
     </div>
   )

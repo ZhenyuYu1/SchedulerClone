@@ -103,7 +103,7 @@ export async function POST(request: Request) {
     }
   }
 
-  const { data, error } = await supabase.from('Events').insert([body]).select()
+  const { data, error } = await supabase.from('events').insert([body]).select()
 
   if (error) {
     return NextResponse.json(

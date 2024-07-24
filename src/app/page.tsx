@@ -71,8 +71,8 @@ export default function Index() {
               events.map((event) => (
                 <EventCard
                   title={event.title}
-                  startTime={event.starttime}
-                  endTime={event.endtime}
+                  starttime={event.starttime}
+                  endtime={event.endtime}
                   key={event.id}
                 />
               ))}{' '}
