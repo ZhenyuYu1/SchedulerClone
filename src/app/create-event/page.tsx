@@ -1,9 +1,11 @@
 'use client'
 import { useState } from 'react'
-import { UUID } from 'crypto'
+import { randomUUID, UUID } from 'crypto'
 import { days, modeOptions } from '@/utils/dateUtils'
+import { setUsernameLocalStorage } from '@/utils/userUtils'
 
 import EventForm from '@/components/EventForm'
+import { create } from 'domain'
 
 export default function CreateEvent() {
   const [title, setTitle] = useState('')
@@ -88,6 +90,10 @@ export default function CreateEvent() {
       })
     }
 
+    setUsernameLocalStorage()
+    const creatorId = localStorage.getItem('username') as UUID
+    console.log('username in local storage: ', creatorId)
+
     insertEvent(
       title,
       description,
@@ -99,7 +105,7 @@ export default function CreateEvent() {
       mode === 'weekly'
         ? daysOfWeekJSON
         : JSON.parse('{"days": ["2024-01-01"]}'), // filler for specific mode now because no calendar yet
-      '9e33186f-95db-4385-a974-ee38c8e07547',
+      creatorId,
     )
   }
 

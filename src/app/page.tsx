@@ -39,7 +39,9 @@ export default function Index() {
         })
     }
 
-    getMyEvents('9e33186f-95db-4385-a974-ee38c8e07547') // filler UUID for now until local storage is setup
+    if (localStorage.getItem('username')) {
+      getMyEvents(localStorage.getItem('username') as UUID)
+    }
   }, [])
 
   return (
