@@ -26,10 +26,13 @@ export async function POST(request: Request) {
     )
   }
 
-  const { data, error } = await supabase.from('Users').insert([body]).select()
+  const { data, error } = await supabase.from('users').insert([body]).select()
 
   if (error) {
-    return NextResponse.json({ message: 'Error inserting user' })
+    return NextResponse.json(
+      { message: 'Error inserting user: ' + error.message },
+      { status: 400 },
+    )
   }
   return NextResponse.json(data)
 }
