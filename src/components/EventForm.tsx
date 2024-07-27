@@ -1,5 +1,6 @@
 'use client'
 import React from 'react'
+import { days, modeOptions } from '@/utils/dateUtils'
 
 // Generate hourly time options array used for
 // EarliestTime and LatestTime dropdowns
@@ -21,8 +22,10 @@ interface EventFormProps {
   setEarliestTime: React.Dispatch<React.SetStateAction<string>>
   latestTime: string
   setLatestTime: React.Dispatch<React.SetStateAction<string>>
-  daysOfWeek: string[]
-  setDaysOfWeek: React.Dispatch<React.SetStateAction<string[]>>
+  mode: string
+  setMode: React.Dispatch<React.SetStateAction<string>>
+  daysOfWeek: string[] | null
+  setDaysOfWeek: React.Dispatch<React.SetStateAction<string[] | null>>
   timezone: string
   setTimezone: React.Dispatch<React.SetStateAction<string>>
   handleSubmit: () => void
@@ -39,6 +42,8 @@ const EventForm = ({
   setEarliestTime,
   latestTime,
   setLatestTime,
+  mode,
+  setMode,
   daysOfWeek,
   setDaysOfWeek,
   timezone,
@@ -47,6 +52,8 @@ const EventForm = ({
 }: EventFormProps) => {
   // Function to handle selected daysOfWeek array based on checkbox selection and deselection
   const handleSelectedDayOfWeek = (day: string) => {
+    setMode('weekly')
+    daysOfWeek = daysOfWeek || []
     const index = daysOfWeek.indexOf(day)
     if (index === -1) {
       // Day is not in the array, add it
@@ -57,6 +64,11 @@ const EventForm = ({
       updatedDays.splice(index, 1)
       setDaysOfWeek(updatedDays)
     }
+  }
+
+  // Function to handle checkbox change for Days of the week
+  const handleChange = (day: string) => {
+    handleSelectedDayOfWeek(day)
   }
 
   return (
@@ -124,62 +136,17 @@ const EventForm = ({
         <div //Days of the week
           className="join w-full"
         >
-          <input
-            className="btn join-item border-gray-300 bg-white"
-            type="checkbox"
-            name="options"
-            aria-label="Mon"
-            checked={daysOfWeek.includes('Mon')}
-            onChange={() => handleSelectedDayOfWeek('Mon')}
-          />
-          <input
-            className="btn join-item border-gray-300 bg-white"
-            type="checkbox"
-            name="options"
-            aria-label="Tue"
-            checked={daysOfWeek.includes('Tue')}
-            onChange={() => handleSelectedDayOfWeek('Tue')}
-          />
-          <input
-            className="btn join-item border-gray-300 bg-white"
-            type="checkbox"
-            name="options"
-            aria-label="Wed"
-            checked={daysOfWeek.includes('Wed')}
-            onChange={() => handleSelectedDayOfWeek('Wed')}
-          />
-          <input
-            className="btn join-item border-gray-300 bg-white"
-            type="checkbox"
-            name="options"
-            aria-label="Thu"
-            checked={daysOfWeek.includes('Thu')}
-            onChange={() => handleSelectedDayOfWeek('Thu')}
-          />
-          <input
-            className="btn join-item border-gray-300 bg-white"
-            type="checkbox"
-            name="options"
-            aria-label="Fri"
-            checked={daysOfWeek.includes('Fri')}
-            onChange={() => handleSelectedDayOfWeek('Fri')}
-          />
-          <input
-            className="btn join-item border-gray-300 bg-white"
-            type="checkbox"
-            name="options"
-            aria-label="Sat"
-            checked={daysOfWeek.includes('Sat')}
-            onChange={() => handleSelectedDayOfWeek('Sat')}
-          />
-          <input
-            className="btn join-item border-gray-300 bg-white"
-            type="checkbox"
-            name="options"
-            aria-label="Sun"
-            checked={daysOfWeek.includes('Sun')}
-            onChange={() => handleSelectedDayOfWeek('Sun')}
-          />
+          {days.map((day) => (
+            <input
+              key={day}
+              className="btn join-item border-gray-300 bg-white"
+              type="checkbox"
+              name="options"
+              aria-label={day}
+              checked={daysOfWeek?.includes(day) || false}
+              onChange={() => handleChange(day)}
+            />
+          ))}
         </div>
 
         <select //Timezone dropdown
