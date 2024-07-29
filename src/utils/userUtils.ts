@@ -23,7 +23,6 @@ export function createUser(name: string) {
     .then((data) => {
       if (!localStorage.getItem('username')) {
         localStorage.setItem('username', data[0].id)
-        console.log('Local storage usernam: ', localStorage.getItem('username'))
       }
       console.log('Success:', data)
     })
@@ -32,8 +31,8 @@ export function createUser(name: string) {
     })
 }
 
-export function getUser(userId: UUID) {
-  fetch(`/api/users?userId=${userId}`, {
+export async function getUser(userId: UUID) {
+  return fetch(`/api/users?userId=${userId}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -49,6 +48,7 @@ export function getUser(userId: UUID) {
     })
     .then((data) => {
       console.log(data)
+      return data
     })
     .catch((error) => {
       console.error('Error:', error.message)
@@ -87,10 +87,6 @@ export async function addUserCreateEvent(
       .then((data) => {
         if (!localStorage.getItem('username')) {
           localStorage.setItem('username', data[0].id)
-          console.log(
-            'Local storage usernam: ',
-            localStorage.getItem('username'),
-          )
         }
         console.log('Success:', data)
       })

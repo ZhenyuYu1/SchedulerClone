@@ -2,14 +2,20 @@ import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { createServerClient } from '@/utils/supabase'
 
-export async function GET() {
+export async function GET(request: Request) {
   const cookieStore = cookies()
   const supabase = createServerClient(cookieStore)
 
-  const { data, error } = await supabase.from('Users').select()
+  const url = new URL(request.url)
+  const userId = url.searchParams.get('userId')
+
+  const { data, error } = await supabase.from('users').select().eq('id', userId)
 
   if (error) {
-    return NextResponse.json({ message: 'Error fetching users' })
+    return NextResponse.json(
+      { message: 'Error fetching users: ' + error.message },
+      { status: 400 },
+    )
   }
   return NextResponse.json(data)
 }
