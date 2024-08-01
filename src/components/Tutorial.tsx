@@ -10,9 +10,14 @@ export default function Tutorial() {
         How it works:
       </h1>
       <ol className="list-inside list-decimal text-xl">
-        <li>Create a new FindATime event using the events form</li>
+        <li>
+          Create a new FindATime event at &apos;Create Event&apos; using the
+          events form
+        </li>
+        <li>Fill in the event details</li>
+        <li>Add your availability.</li>
         <li>Share the provided link with participants</li>
-        <li>View and edit your events from the dashboard</li>
+        <li>View and edit your events from the &apos;Dashboard&apos;</li>
       </ol>
       <div className="mt-4">
         <Link href="/home">

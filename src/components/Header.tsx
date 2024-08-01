@@ -17,11 +17,17 @@ export default function Header() {
             <p className="text-primary">FindATime</p>
           </Link>
         </div>
-        <Link href="#FAQ">
-          <button className="btn btn-primary ml-6">
-            Frequently Asked Questions
-          </button>
-        </Link>
+        <div>
+          <Link href="/home">
+            <button className="btn btn-primary ml-3">Dashboard</button>
+          </Link>
+          <Link href="/create-event">
+            <button className="btn btn-primary ml-3">Create Event</button>
+          </Link>
+          <Link href="#FAQ">
+            <button className="btn btn-primary ml-3">FAQ</button>
+          </Link>
+        </div>
       </div>
     </header>
   )

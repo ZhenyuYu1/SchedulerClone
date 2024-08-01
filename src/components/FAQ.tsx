@@ -3,14 +3,14 @@ import { useState } from 'react'
 export default function FAQ() {
   const faqs = [
     {
-      question: 'How do I create a new meeting?',
+      question: 'How do I create a new event?',
       answer:
-        "To create a new meeting, press 'Get Started' to go to the dashboard and click on 'New Event'.",
+        "To create a new event, go to the 'Create Event' page and fill in the event details, or press 'New Event' from the dashboard.",
     },
     {
       question: 'How do I invite participants?',
       answer:
-        'To invite participants, share the meeting link with them after creating a new event.',
+        'To invite participants, share the event link with them after creating a new event.',
     },
   ]
 
