@@ -64,7 +64,6 @@ export async function addUserCreateEvent(
   timezone: string,
   mode: string,
   config: JSON,
-  name: string,
 ) {
   if (!localStorage.getItem('username')) {
     await fetch('/api/users/create', {
@@ -73,7 +72,9 @@ export async function addUserCreateEvent(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        name: name,
+        name: localStorage.getItem('username')
+          ? localStorage.getItem('username')
+          : randomUUID(),
       }),
     })
       .then((response) => {
