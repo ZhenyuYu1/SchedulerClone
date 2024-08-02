@@ -14,7 +14,7 @@ export default function Header() {
             className="inline-block h-8 w-8"
           />
           <Link className="pl-4" href="/">
-            <p className="text-primary">FindATime</p>
+            <p className="text-primary">FindingATime</p>
           </Link>
         </div>
         <div>

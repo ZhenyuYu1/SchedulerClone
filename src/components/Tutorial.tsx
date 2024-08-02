@@ -11,7 +11,7 @@ export default function Tutorial() {
       </h1>
       <ol className="list-inside list-decimal text-xl">
         <li>
-          Create a new FindATime event at &apos;Create Event&apos; using the
+          Create a new FindingATime event at &apos;Create Event&apos; using the
           events form
         </li>
         <li>Fill in the event details</li>
