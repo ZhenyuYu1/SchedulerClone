@@ -4,20 +4,22 @@ import { UUID } from 'crypto'
 
 import EventForm from '@/components/EventForm'
 import Grid from '@/components/AvailabilityGrid'
+import Responses from '@/components/Responses'
 
 export default function CreateEvent() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [location, setLocation] = useState('')
-  const [earliestTime, setEarliestTime] = useState('')
-  const [latestTime, setLatestTime] = useState('')
+  const [earliestTime, setEarliestTime] = useState('9:00 AM')
+  const [latestTime, setLatestTime] = useState('5:00 PM')
   const [mode, setMode] = useState('')
   const [config, setConfig] = useState<JSON | null>(null)
-  const [daysOfWeek, setDaysOfWeek] = useState<string[] | null>([])
+  const [daysOfWeek, setDaysOfWeek] = useState<string[] | null>(null)
   const [timezone, setTimezone] = useState('')
 
   const [isAvailable, setIsAvailable] = useState(false) // set to true when name is entered at sign in
   const [userName, setUserName] = useState('') // set to name entered at sign in
+  const [responders, setResponders] = useState<string[]>([]) // array to store names of users who signed in
   const dialogRef = useRef<HTMLDialogElement>(null) // modal
 
   const insertEvent = (
@@ -64,6 +66,21 @@ export default function CreateEvent() {
       })
   }
 
+  /* 
+    Add userName to responders array when they click the "Save" button 
+   */
+  const handleSaveResponse = () => {
+    if (userName) {
+      setResponders((prevResponders) => {
+        const updatedResponders = [...prevResponders, userName]
+        return updatedResponders
+      })
+      if (dialogRef.current) {
+        dialogRef.current.close()
+      }
+    }
+  }
+
   // Create Event Button function
   const handleSubmit = () => {
     console.log(`Title: ${title}`)
@@ -106,8 +123,12 @@ export default function CreateEvent() {
         : JSON.parse('{"days": ["2024-01-01"]}'), // filler for specific mode now because no calendar yet
       '9e33186f-95db-4385-a974-ee38c8e07547',
     )
+
+    // Call handleSaveResponse to save the response
+    handleSaveResponse()
   }
 
+  // Function to open modal for sign in
   const openModal = () => {
     if (dialogRef.current) {
       dialogRef.current.showModal()
@@ -116,10 +137,10 @@ export default function CreateEvent() {
 
   return (
     <div //main screen
-      className="flex min-h-screen w-full flex-col md:flex-row"
+      className="flex min-h-screen w-full flex-col gap-8 p-8 md:flex-row"
     >
-      <section //Left side container
-        className="h-full w-full p-10 md:w-2/5"
+      <section //Left side container (Event form)
+        className="h-full w-full rounded-lg px-6 py-16 shadow-lg md:w-[28%]"
       >
         <EventForm
           title={title}
@@ -138,18 +159,13 @@ export default function CreateEvent() {
           setDaysOfWeek={setDaysOfWeek}
           timezone={timezone}
           setTimezone={setTimezone}
-          handleSubmit={handleSubmit}
         />
-      </section>
 
-      <section //Right side container
-        className="w-full p-4 md:w-3/5 md:p-10"
-      >
         <div //button container for positioning button
-          className="mx-4 flex justify-end"
+          className="mx-4 flex justify-center pt-8"
         >
           <button
-            className="btn btn-primary ml-4 rounded px-4 py-2 text-white"
+            className="btn btn-primary ml-4 rounded-full px-4 py-2 text-white"
             onClick={openModal}
           >
             Add Availability
@@ -171,7 +187,7 @@ export default function CreateEvent() {
 
               <div className="modal-action">
                 <form method="dialog">
-                  <button className="btn btn-primary ml-4 rounded px-4 py-2 text-white">
+                  <button className="btn btn-primary ml-4 rounded-full px-4 py-2 text-white">
                     Sign In
                   </button>
                 </form>
@@ -179,7 +195,41 @@ export default function CreateEvent() {
             </div>
           </dialog>
         </div>
-        <Grid isAvailable={isAvailable} userName={userName} />
+      </section>
+
+      <section //Middle side container (Availability Grid)
+        className="w-full gap-8 md:w-[57%]"
+      >
+        <Grid
+          earliestTime={earliestTime}
+          latestTime={latestTime}
+          isAvailable={isAvailable}
+          daysOfWeek={daysOfWeek || []}
+        />
+
+        <div //button container for positioning "Save" and "Cancel" buttons
+          className="flex flex-row justify-center gap-4 pt-8 "
+        >
+          <button
+            className="btn btn-outline rounded-full px-4 py-2 text-red-400 hover:!border-red-400 hover:bg-red-300"
+            //onClick={}
+          >
+            Cancel
+          </button>
+
+          <button
+            className="btn btn-primary rounded-full px-4 py-2 text-white"
+            onClick={handleSubmit}
+          >
+            Create Event
+          </button>
+        </div>
+      </section>
+
+      <section //Right side container (Responses)
+        className="w-full px-3 py-8 md:w-[15%]"
+      >
+        <Responses responders={responders} />
       </section>
     </div>
   )

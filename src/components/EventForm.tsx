@@ -1,15 +1,7 @@
 'use client'
 import React from 'react'
 import { days, modeOptions } from '@/utils/dateUtils'
-
-// Generate hourly time options array used for
-// EarliestTime and LatestTime dropdownss
-const times: string[] = []
-for (let hour = 1; hour <= 24; hour++) {
-  const suffix = hour <= 12 ? 'AM' : 'PM'
-  const displayHour = hour <= 12 ? hour : hour - 12
-  times.push(`${displayHour}:00 ${suffix}`)
-}
+import { times } from '@/utils/timeUtils'
 
 interface EventFormProps {
   title: string
@@ -28,7 +20,6 @@ interface EventFormProps {
   setDaysOfWeek: React.Dispatch<React.SetStateAction<string[] | null>>
   timezone: string
   setTimezone: React.Dispatch<React.SetStateAction<string>>
-  handleSubmit: () => void
 }
 
 const EventForm = ({
@@ -48,7 +39,6 @@ const EventForm = ({
   setDaysOfWeek,
   timezone,
   setTimezone,
-  handleSubmit,
 }: EventFormProps) => {
   // Function to handle selected daysOfWeek array based on checkbox selection and deselection
   const handleSelectedDayOfWeek = (day: string) => {
@@ -81,7 +71,7 @@ const EventForm = ({
           value={title}
           placeholder="New Event Title"
           onChange={(e) => setTitle(e.target.value)}
-          className="input w-full border-gray-300 bg-white text-2xl font-medium focus-visible:ring-0"
+          className="input w-full border-gray-300 bg-white text-xl font-normal focus-visible:ring-0"
         />
 
         <textarea //Event Description text input
@@ -134,12 +124,12 @@ const EventForm = ({
         </div>
 
         <div //Days of the week
-          className="join w-full"
+          className="join flex w-full space-x-1.5"
         >
           {days.map((day) => (
             <input
               key={day}
-              className="btn join-item border-gray-300 bg-white"
+              className="btn h-10 min-h-3 w-10 rounded-full border-gray-300 bg-white text-sm font-normal"
               type="checkbox"
               name="options"
               aria-label={day}
@@ -165,12 +155,6 @@ const EventForm = ({
           <option>JST (Japan Standard Time)</option>
         </select>
       </form>
-      <button //Submit button
-        onClick={handleSubmit}
-        className="btn btn-primary mt-10 w-full"
-      >
-        Create Event
-      </button>
     </>
   )
 }
