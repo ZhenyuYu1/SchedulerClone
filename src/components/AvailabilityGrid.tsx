@@ -136,7 +136,11 @@ const Grid = ({
                   key={`${rowIndex}-${colIndex}`}
                   className={`flex h-16 ${
                     isSelected ? 'bg-green-500' : 'bg-white'
-                  } ${colIndex < dimensions.width - 1 ? 'border-r border-gray-100' : ''} ${
+                  } ${
+                    colIndex < dimensions.width - 1
+                      ? 'border-r border-gray-100'
+                      : ''
+                  } ${
                     rowIndex < dimensions.height - 1
                       ? 'border-b border-gray-100'
                       : ''
