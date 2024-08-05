@@ -1,6 +1,8 @@
 'use client'
 import React from 'react'
 import { days, modeOptions } from '@/utils/dateUtils'
+import { useState } from 'react'
+import Calendar from 'react-calendar'
 
 // Generate hourly time options array used for
 // EarliestTime and LatestTime dropdownss
@@ -26,10 +28,16 @@ interface EventFormProps {
   setMode: React.Dispatch<React.SetStateAction<string>>
   daysOfWeek: string[] | null
   setDaysOfWeek: React.Dispatch<React.SetStateAction<string[] | null>>
+  specificDays: Date[]
+  setSpecificDays: React.Dispatch<React.SetStateAction<Date[]>>
   timezone: string
   setTimezone: React.Dispatch<React.SetStateAction<string>>
   handleSubmit: () => void
 }
+
+type ValuePiece = Date | null
+
+type Value = ValuePiece[]
 
 const EventForm = ({
   title,
@@ -46,13 +54,14 @@ const EventForm = ({
   setMode,
   daysOfWeek,
   setDaysOfWeek,
+  specificDays,
+  setSpecificDays,
   timezone,
   setTimezone,
   handleSubmit,
 }: EventFormProps) => {
   // Function to handle selected daysOfWeek array based on checkbox selection and deselection
   const handleSelectedDayOfWeek = (day: string) => {
-    setMode('weekly')
     daysOfWeek = daysOfWeek || []
     const index = daysOfWeek.indexOf(day)
     if (index === -1) {
@@ -68,7 +77,9 @@ const EventForm = ({
 
   // Function to handle checkbox change for Days of the week
   const handleChange = (day: string) => {
-    handleSelectedDayOfWeek(day)
+    if (mode === 'weekly') {
+      handleSelectedDayOfWeek(day)
+    }
   }
 
   return (
@@ -133,20 +144,67 @@ const EventForm = ({
           </select>
         </div>
 
-        <div //Days of the week
-          className="join w-full"
-        >
-          {days.map((day) => (
-            <input
-              key={day}
-              className="btn join-item border-gray-300 bg-white"
-              type="checkbox"
-              name="options"
-              aria-label={day}
-              checked={daysOfWeek?.includes(day) || false}
-              onChange={() => handleChange(day)}
+        <div className="mb-4">
+          <button
+            type="button"
+            className={`btn ${mode === 'weekly' ? 'btn-active' : ''}`}
+            onClick={() => {
+              setMode('weekly')
+            }}
+          >
+            Weekly Days
+          </button>
+          <button
+            type="button"
+            className={`btn ${mode === 'specific' ? 'btn-active' : ''}`}
+            onClick={() => setMode('specific')}
+          >
+            Specific Days
+          </button>
+        </div>
+        <div>
+          {mode === 'specific' ? (
+            <Calendar // Specific days
+              minDate={new Date()}
+              maxDate={new Date(new Date().setDate(new Date().getDate() + 60))}
+              activeStartDate={new Date()}
+              onChange={(value) => {
+                console.log(value)
+                const dateValue = value as Date
+                if (
+                  !specificDays?.some(
+                    (day) => day.getTime() === dateValue.getTime(),
+                  )
+                ) {
+                  // Add the value date to the specificDays array
+                  setSpecificDays([...specificDays, dateValue])
+                } else {
+                  // Remove the value date from the specificDays array
+                  const updatedDays = specificDays.filter(
+                    (day) => day.getTime() !== dateValue.getTime(),
+                  )
+                  setSpecificDays(updatedDays)
+                }
+                console.log(specificDays)
+              }}
             />
-          ))}
+          ) : (
+            <div //Days of the week
+              className="join w-full"
+            >
+              {days.map((day) => (
+                <input
+                  key={day}
+                  className="btn join-item border-gray-300 bg-white"
+                  type="checkbox"
+                  name="options"
+                  aria-label={day}
+                  checked={daysOfWeek?.includes(day) || false}
+                  onChange={() => handleChange(day)}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         <select //Timezone dropdown
