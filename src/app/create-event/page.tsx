@@ -1,8 +1,9 @@
 'use client'
+
 import { useState } from 'react'
 import { UUID } from 'crypto'
+import { useRouter } from 'next/navigation'
 import { days, modeOptions } from '@/utils/dateUtils'
-
 import EventForm from '@/components/EventForm'
 
 export default function CreateEvent() {
@@ -16,7 +17,9 @@ export default function CreateEvent() {
   const [daysOfWeek, setDaysOfWeek] = useState<string[] | null>([])
   const [timezone, setTimezone] = useState('')
 
-  const insertEvent = (
+  const router = useRouter()
+
+  const insertEvent = async (
     title: string,
     description: string,
     starttime: string,
@@ -27,7 +30,7 @@ export default function CreateEvent() {
     config: JSON,
     creator: UUID,
   ) => {
-    fetch('/api/events/create', {
+    const response = await fetch('/api/events/create', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -44,23 +47,16 @@ export default function CreateEvent() {
         creator: creator,
       }),
     })
-      .then((response) => {
-        if (!response.ok) {
-          return response.json().then((err) => {
-            throw new Error(err.message)
-          })
-        }
-        return response.json()
-      })
-      .then((data) => {
-        console.log('Success:', data)
-      })
-      .catch((error) => {
-        console.error('Error:', error.message)
-      })
+
+    if (!response.ok) {
+      const err = await response.json()
+      throw new Error(err.message)
+    }
+
+    return response.json() // Returns the JSON response including the eventId
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log(`Title: ${title}`)
     console.log(`Description: ${description}`)
     console.log(`Location: ${location}`)
@@ -88,19 +84,29 @@ export default function CreateEvent() {
       })
     }
 
-    insertEvent(
-      title,
-      description,
-      earliestTime,
-      latestTime,
-      location,
-      timezone,
-      mode,
-      mode === 'weekly'
-        ? daysOfWeekJSON
-        : JSON.parse('{"days": ["2024-01-01"]}'), // filler for specific mode now because no calendar yet
-      '9e33186f-95db-4385-a974-ee38c8e07547',
-    )
+    try {
+      const data = await insertEvent(
+        title,
+        description,
+        earliestTime,
+        latestTime,
+        location,
+        timezone,
+        mode,
+        mode === 'weekly'
+          ? daysOfWeekJSON
+          : JSON.parse('{"days": ["2024-01-01"]}'), // filler for specific mode now because no calendar yet
+        '9e33186f-95db-4385-a974-ee38c8e07547', // userId placeholder
+      )
+
+      router.push(`/view-event?eventId=${data[0].id}`) // Redirects to the event view page using the eventId
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('Error:', error.message)
+      } else {
+        console.error('Unexpected error:', error)
+      }
+    }
   }
 
   return (

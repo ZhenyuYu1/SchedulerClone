@@ -1,6 +1,7 @@
 'use client'
 import React from 'react'
 import Link from 'next/link'
+import { Redirect } from 'next'
 
 // Generate hourly time options array used for
 // EarliestTime and LatestTime dropdowns
@@ -209,7 +210,8 @@ const EventForm = ({
           </select>
         </form>
 
-        <Link href="/view-event">
+        {/* <Link href={`/view-event?eventId=${eventId}`}>   */}
+        <Link href="/view-event?eventId=">
           <button
             onClick={handleSubmit}
             className="btn btn-outline mt-6 w-full self-center"
