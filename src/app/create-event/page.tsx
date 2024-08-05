@@ -57,7 +57,6 @@ export default function CreateEvent() {
       mode === 'weekly'
         ? daysOfWeekJSON
         : JSON.parse('{"days": ["2024-01-01"]}'), // filler for specific mode now because no calendar yet
-      'testUsername',
     )
   }
 
