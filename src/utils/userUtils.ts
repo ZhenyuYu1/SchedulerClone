@@ -1,4 +1,4 @@
-import { randomUUID, UUID } from 'crypto'
+import { UUID } from 'crypto'
 import { insertEvent } from './eventsUtils'
 import { create } from 'domain'
 
@@ -74,7 +74,7 @@ export async function addUserCreateEvent(
       body: JSON.stringify({
         name: localStorage.getItem('username')
           ? localStorage.getItem('username')
-          : randomUUID(),
+          : 'Guest',
       }),
     })
       .then((response) => {

@@ -9,7 +9,10 @@ export async function GET(request: Request) {
   const url = new URL(request.url)
   const userId = url.searchParams.get('userId')
 
-  const { data, error } = await supabase.from('users').select().eq('id', userId)
+  const { data, error } = await supabase
+    .from('users')
+    .select('name')
+    .eq('id', userId)
 
   if (error) {
     return NextResponse.json(
