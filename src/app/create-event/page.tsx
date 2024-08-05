@@ -22,6 +22,8 @@ export default function CreateEvent() {
   const [responders, setResponders] = useState<string[]>([]) // array to store names of users who signed in
   const dialogRef = useRef<HTMLDialogElement>(null) // modal
 
+  const [isButtonsVisible, setIsButtonsVisible] = useState(false) // New state to control visibility of buttons
+
   const insertEvent = (
     title: string,
     description: string,
@@ -126,9 +128,11 @@ export default function CreateEvent() {
 
     // Call handleSaveResponse to save the response
     handleSaveResponse()
+    setIsAvailable(false) // Set availability to false when user creates event/saves their availability
+    setIsButtonsVisible(false) // Hide buttons after creating event
   }
 
-  // Function to open modal for sign in
+  // Function to open modal for after clicking "Sign In"
   const openModal = () => {
     if (dialogRef.current) {
       dialogRef.current.showModal()
@@ -140,7 +144,7 @@ export default function CreateEvent() {
       className="flex min-h-screen w-full flex-col gap-8 p-8 md:flex-row"
     >
       <section //Left side container (Event form)
-        className="h-full w-full rounded-lg px-6 py-16 shadow-lg md:w-[28%]"
+        className="h-full w-full rounded-lg px-6 py-16 shadow-lg md:w-[30%]"
       >
         <EventForm
           title={title}
@@ -171,7 +175,7 @@ export default function CreateEvent() {
             Add Availability
           </button>
 
-          <dialog ref={dialogRef} id="my_modal_1" className="modal">
+          <dialog ref={dialogRef} id="username_modal" className="modal">
             <div className="modal-box bg-white focus:outline-white ">
               <h3 className="py-4 text-lg font-bold">Sign In</h3>
 
@@ -181,13 +185,18 @@ export default function CreateEvent() {
                 className="input input-bordered w-full max-w-xs bg-white py-4"
                 onChange={(e) => {
                   setUserName(e.target.value)
-                  setIsAvailable(true)
                 }} // Update isAvailable to true when name is entered
               />
 
               <div className="modal-action">
                 <form method="dialog">
-                  <button className="btn btn-primary ml-4 rounded-full px-4 py-2 text-white">
+                  <button
+                    className="btn btn-primary ml-4 rounded-full px-4 py-2 text-white"
+                    onClick={() => {
+                      setIsAvailable(true)
+                      setIsButtonsVisible(true) // Show buttons when user signs in
+                    }}
+                  >
                     Sign In
                   </button>
                 </form>
@@ -207,27 +216,32 @@ export default function CreateEvent() {
           daysOfWeek={daysOfWeek || []}
         />
 
-        <div //button container for positioning "Save" and "Cancel" buttons
-          className="flex flex-row justify-center gap-4 pt-8 "
-        >
-          <button
-            className="btn btn-outline rounded-full px-4 py-2 text-red-400 hover:!border-red-400 hover:bg-red-300"
-            //onClick={}
+        {isButtonsVisible && ( // Conditionally render buttons section
+          <div //button container for positioning "Save" and "Cancel" buttons
+            className="flex flex-row justify-center gap-4 pt-8 "
           >
-            Cancel
-          </button>
+            <button
+              className="btn btn-outline rounded-full px-4 py-2 text-red-400 hover:!border-red-400 hover:bg-red-300"
+              onClick={() => {
+                setIsAvailable(false)
+                setIsButtonsVisible(false)
+              }} // Set availability to false when user cancels
+            >
+              Cancel
+            </button>
 
-          <button
-            className="btn btn-primary rounded-full px-4 py-2 text-white"
-            onClick={handleSubmit}
-          >
-            Create Event
-          </button>
-        </div>
+            <button
+              className="btn btn-primary rounded-full px-4 py-2 text-white"
+              onClick={handleSubmit}
+            >
+              Create Event
+            </button>
+          </div>
+        )}
       </section>
 
       <section //Right side container (Responses)
-        className="w-full px-3 py-8 md:w-[15%]"
+        className="w-full py-8 md:w-[13%]"
       >
         <Responses responders={responders} />
       </section>
