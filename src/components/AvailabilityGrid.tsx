@@ -5,7 +5,7 @@ import { generateTimeRange } from '@/utils/timeUtils'
 interface GridProps {
   earliestTime: string
   latestTime: string
-  isAvailable: boolean // Determines if the grid is selectable
+  isAvailable: boolean // Determines if the grid is selectable (selection mode)
   daysOfWeek: string[]
 }
 
@@ -84,15 +84,15 @@ const Grid = ({
           className="grid-time-headers"
           style={{
             display: 'grid',
-            gridTemplateRows: `repeat(${dimensions.height}, 1fr)`,
-            alignItems: 'center',
+            gridTemplateRows: `repeat(${dimensions.height}, 64px)`,
+            alignItems: 'flex-start',
           }}
         >
           {timeArray.map((time, index) => (
             <div
               key={index}
-              className="flex items-center justify-end border-gray-300 pr-2"
-              style={{ height: '64px' }}
+              className="flex items-start justify-end border-gray-300 pr-2 text-xs text-gray-600"
+              style={{ height: '64px', lineHeight: '64px' }}
             >
               {time}
             </div>
@@ -111,7 +111,7 @@ const Grid = ({
             {daysOfWeek.map((day, index) => (
               <div
                 key={index}
-                className="flex items-center justify-center border-gray-300"
+                className="flex items-center justify-center border-gray-300 text-sm text-gray-600"
                 style={{ height: '2rem' }}
               >
                 {day}
@@ -121,29 +121,37 @@ const Grid = ({
 
           {/* Main Grid body cells for selecting and deselecting */}
           <div
-            className="grid h-full border border-gray-300"
+            className={`grid h-full border border-gray-300 ${
+              isAvailable ? 'bg-red-50' : '' //in selection mode, background is red
+            }`}
             style={{
               display: 'grid',
               gridTemplateColumns: `repeat(${dimensions.width}, 1fr)`,
               gridTemplateRows: `repeat(${dimensions.height}, 1fr)`,
               width: '100%',
-              height: `${dimensions.height * 64 + 3}px`,
+              height: `${dimensions.height * 64}px`,
             }}
           >
             {grid.map((row, rowIndex) =>
               row.map((isSelected, colIndex) => (
                 <div
                   key={`${rowIndex}-${colIndex}`}
-                  className={`flex h-16 ${
-                    isSelected ? 'bg-green-500' : 'bg-white'
+                  className={`flex h-16 ${isSelected ? 'bg-emerald-300' : ''} ${
+                    isAvailable
+                      ? colIndex < dimensions.width - 1
+                        ? 'border-r border-gray-300' // Darker border color when available
+                        : ''
+                      : colIndex < dimensions.width - 1
+                        ? 'border-r border-gray-200' // Default border color
+                        : ''
                   } ${
-                    colIndex < dimensions.width - 1
-                      ? 'border-r border-gray-100'
-                      : ''
-                  } ${
-                    rowIndex < dimensions.height - 1
-                      ? 'border-b border-gray-100'
-                      : ''
+                    isAvailable
+                      ? rowIndex < dimensions.height - 1
+                        ? 'border-b border-gray-300' // Darker border color when available
+                        : ''
+                      : rowIndex < dimensions.height - 1
+                        ? 'border-b border-gray-200' // Default border color
+                        : ''
                   } cursor-pointer`}
                   onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
                   onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
