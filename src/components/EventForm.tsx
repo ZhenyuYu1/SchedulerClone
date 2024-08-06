@@ -4,15 +4,7 @@ import { days, modeOptions } from '@/utils/dateUtils'
 import { useState } from 'react'
 import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
-
-// Generate hourly time options array used for
-// EarliestTime and LatestTime dropdownss
-const times: string[] = []
-for (let hour = 1; hour <= 24; hour++) {
-  const suffix = hour <= 12 ? 'AM' : 'PM'
-  const displayHour = hour <= 12 ? hour : hour - 12
-  times.push(`${displayHour}:00 ${suffix}`)
-}
+import { times } from '@/utils/timeUtils'
 
 interface EventFormProps {
   title: string
@@ -33,7 +25,6 @@ interface EventFormProps {
   setSpecificDays: React.Dispatch<React.SetStateAction<Date[]>>
   timezone: string
   setTimezone: React.Dispatch<React.SetStateAction<string>>
-  handleSubmit: () => void
 }
 
 type ValuePiece = Date | null
@@ -59,7 +50,6 @@ const EventForm = ({
   setSpecificDays,
   timezone,
   setTimezone,
-  handleSubmit,
 }: EventFormProps) => {
   // Function to handle selected daysOfWeek array based on checkbox selection and deselection
   const handleSelectedDayOfWeek = (day: string) => {
@@ -93,7 +83,7 @@ const EventForm = ({
           value={title}
           placeholder="New Event Title"
           onChange={(e) => setTitle(e.target.value)}
-          className="input w-full border-gray-300 bg-white text-2xl font-medium focus-visible:ring-0"
+          className="input w-full border-gray-300 bg-white text-xl font-normal focus-visible:ring-0"
         />
 
         <textarea //Event Description text input
@@ -230,12 +220,6 @@ const EventForm = ({
           <option>JST (Japan Standard Time)</option>
         </select>
       </form>
-      <button //Submit button
-        onClick={handleSubmit}
-        className="btn btn-primary mt-10 w-full"
-      >
-        Create Event
-      </button>
     </>
   )
 }
