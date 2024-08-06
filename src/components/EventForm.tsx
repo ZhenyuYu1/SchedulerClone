@@ -3,6 +3,7 @@ import React from 'react'
 import { days, modeOptions } from '@/utils/dateUtils'
 import { useState } from 'react'
 import Calendar from 'react-calendar'
+import 'react-calendar/dist/Calendar.css'
 
 // Generate hourly time options array used for
 // EarliestTime and LatestTime dropdownss
@@ -177,16 +178,22 @@ const EventForm = ({
                   )
                 ) {
                   // Add the value date to the specificDays array
-                  setSpecificDays([...specificDays, dateValue])
+                  setSpecificDays((prevDays) => [...prevDays, dateValue])
                 } else {
                   // Remove the value date from the specificDays array
-                  const updatedDays = specificDays.filter(
-                    (day) => day.getTime() !== dateValue.getTime(),
+                  setSpecificDays((prevDays) =>
+                    prevDays.filter(
+                      (day) => day.getTime() !== dateValue.getTime(),
+                    ),
                   )
-                  setSpecificDays(updatedDays)
                 }
                 console.log(specificDays)
               }}
+              tileClassName={({ activeStartDate, date, view }) =>
+                view === 'month' && specificDays.includes(date)
+                  ? 'active'
+                  : null
+              }
             />
           ) : (
             <div //Days of the week
