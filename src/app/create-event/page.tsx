@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useRef } from 'react'
 import { randomUUID, UUID } from 'crypto'
 import { days, modeOptions } from '@/utils/dateUtils'
@@ -28,7 +27,9 @@ export default function CreateEvent() {
 
   const [isButtonsVisible, setIsButtonsVisible] = useState(false) // New state to control visibility of buttons
 
-  //Add userName to responders array when they click the "Save" button 
+  /* 
+    Add userName to responders array when they click the "Save" button 
+   */
   const handleSaveResponse = () => {
     if (userName) {
       setResponders((prevResponders) => {
