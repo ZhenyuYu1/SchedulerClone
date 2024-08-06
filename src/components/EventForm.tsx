@@ -210,15 +210,12 @@ const EventForm = ({
           </select>
         </form>
 
-        {/* <Link href={`/view-event?eventId=${eventId}`}>   */}
-        <Link href="/view-event?eventId=">
-          <button
-            onClick={handleSubmit}
-            className="btn btn-outline mt-6 w-full self-center"
-          >
-            Create Event
-          </button>
-        </Link>
+        <button
+          onClick={handleSubmit}
+          className="btn btn-outline mt-6 w-full self-center"
+        >
+          Create Event
+        </button>
       </section>
 
       <section //Right side container
