@@ -17,7 +17,7 @@ export default function CreateEvent() {
   const [mode, setMode] = useState('weekly')
   const [config, setConfig] = useState<JSON | null>(null)
   const [daysOfWeek, setDaysOfWeek] = useState<string[] | null>(null)
-  const [specificDays, setSpecificDays] = useState<Date[]>([])
+  const [specificDays, setSpecificDays] = useState<Number[]>([])
   const [timezone, setTimezone] = useState('')
 
   const [isAvailable, setIsAvailable] = useState(false) // set to true when name is entered at sign in

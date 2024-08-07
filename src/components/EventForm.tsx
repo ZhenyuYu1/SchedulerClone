@@ -3,8 +3,10 @@ import React from 'react'
 import { days, modeOptions } from '@/utils/dateUtils'
 import { useState } from 'react'
 import Calendar from 'react-calendar'
-import 'react-calendar/dist/Calendar.css'
+// import 'react-calendar/dist/Calendar.css'
 import { times } from '@/utils/timeUtils'
+// import calendarstyles
+import '@/app/calendarStyles.css'
 
 interface EventFormProps {
   title: string
@@ -21,8 +23,8 @@ interface EventFormProps {
   setMode: React.Dispatch<React.SetStateAction<string>>
   daysOfWeek: string[] | null
   setDaysOfWeek: React.Dispatch<React.SetStateAction<string[] | null>>
-  specificDays: Date[]
-  setSpecificDays: React.Dispatch<React.SetStateAction<Date[]>>
+  specificDays: Number[]
+  setSpecificDays: React.Dispatch<React.SetStateAction<Number[]>>
   timezone: string
   setTimezone: React.Dispatch<React.SetStateAction<string>>
 }
@@ -161,29 +163,27 @@ const EventForm = ({
               activeStartDate={new Date()}
               onChange={(value) => {
                 console.log(value)
-                const dateValue = value as Date
-                if (
-                  !specificDays?.some(
-                    (day) => day.getTime() === dateValue.getTime(),
-                  )
-                ) {
+                const dateValue = (value as Date).getTime()
+                if (!specificDays?.some((day) => day === dateValue)) {
                   // Add the value date to the specificDays array
                   setSpecificDays((prevDays) => [...prevDays, dateValue])
                 } else {
                   // Remove the value date from the specificDays array
                   setSpecificDays((prevDays) =>
-                    prevDays.filter(
-                      (day) => day.getTime() !== dateValue.getTime(),
-                    ),
+                    prevDays.filter((day) => day !== dateValue),
                   )
                 }
                 console.log(specificDays)
               }}
-              tileClassName={({ activeStartDate, date, view }) =>
-                view === 'month' && specificDays.includes(date)
+              tileClassName={({ activeStartDate, date, view }) => {
+                if (Date.now() > date.getTime()) {
+                  return 'disabled'
+                }
+                return view === 'month' && specificDays.includes(date.getTime())
                   ? 'active'
                   : null
-              }
+              }}
+              view="month"
             />
           ) : (
             <div //Days of the week
