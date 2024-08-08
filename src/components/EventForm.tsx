@@ -21,17 +21,11 @@ interface EventFormProps {
   setLatestTime: React.Dispatch<React.SetStateAction<string>>
   mode: string
   setMode: React.Dispatch<React.SetStateAction<string>>
-  daysOfWeek: string[] | null
-  setDaysOfWeek: React.Dispatch<React.SetStateAction<string[] | null>>
-  specificDays: Number[]
-  setSpecificDays: React.Dispatch<React.SetStateAction<Number[]>>
+  config: string[]
+  setConfig: React.Dispatch<React.SetStateAction<string[]>>
   timezone: string
   setTimezone: React.Dispatch<React.SetStateAction<string>>
 }
-
-type ValuePiece = Date | null
-
-type Value = ValuePiece[]
 
 const EventForm = ({
   title,
@@ -46,25 +40,26 @@ const EventForm = ({
   setLatestTime,
   mode,
   setMode,
-  daysOfWeek,
-  setDaysOfWeek,
-  specificDays,
-  setSpecificDays,
+  config,
+  setConfig,
   timezone,
   setTimezone,
 }: EventFormProps) => {
+  const [passSpecificDaysLimitMessage, setPassSpecificDaysLimitMessage] =
+    useState('')
+
   // Function to handle selected daysOfWeek array based on checkbox selection and deselection
   const handleSelectedDayOfWeek = (day: string) => {
-    daysOfWeek = daysOfWeek || []
-    const index = daysOfWeek.indexOf(day)
+    config = config || []
+    const index = config.indexOf(day)
     if (index === -1) {
       // Day is not in the array, add it
-      setDaysOfWeek([...daysOfWeek, day])
+      setConfig([...config, day])
     } else {
       // Day is already in the array, remove it
-      const updatedDays = [...daysOfWeek]
+      const updatedDays = [...config]
       updatedDays.splice(index, 1)
-      setDaysOfWeek(updatedDays)
+      setConfig(updatedDays)
     }
   }
 
@@ -157,34 +152,65 @@ const EventForm = ({
         </div>
         <div>
           {mode === 'specific' ? (
-            <Calendar // Specific days
-              minDate={new Date()}
-              maxDate={new Date(new Date().setDate(new Date().getDate() + 60))}
-              activeStartDate={new Date()}
-              onChange={(value) => {
-                console.log(value)
-                const dateValue = (value as Date).getTime()
-                if (!specificDays?.some((day) => day === dateValue)) {
-                  // Add the value date to the specificDays array
-                  setSpecificDays((prevDays) => [...prevDays, dateValue])
-                } else {
-                  // Remove the value date from the specificDays array
-                  setSpecificDays((prevDays) =>
-                    prevDays.filter((day) => day !== dateValue),
-                  )
-                }
-                console.log(specificDays)
-              }}
-              tileClassName={({ activeStartDate, date, view }) => {
-                if (Date.now() > date.getTime()) {
-                  return 'disabled'
-                }
-                return view === 'month' && specificDays.includes(date.getTime())
-                  ? 'active'
-                  : null
-              }}
-              view="month"
-            />
+            <div>
+              <Calendar // Specific days
+                minDate={new Date()}
+                maxDate={
+                  new Date(new Date().setDate(new Date().getDate() + 60))
+                } // only allow users to select dates within the next 60 days
+                activeStartDate={new Date()}
+                onChange={(value) => {
+                  console.log(value)
+                  const dateValue = (value as Date).toString()
+                  let newSpecificDays = config
+                  console.log('Old specific days: ', config)
+                  if (
+                    !config?.some((day) => day === dateValue) &&
+                    config.length < 7
+                  ) {
+                    // 7 day limit
+                    // Add the value date to the specificDays array
+                    newSpecificDays = [...config, dateValue]
+                    setConfig(newSpecificDays)
+                  } else {
+                    // Remove the value date from the specificDays array
+                    console.log('Removing date: ', dateValue)
+                    newSpecificDays = newSpecificDays.filter(
+                      (day) => day !== dateValue,
+                    )
+                    setConfig((prevConfig) =>
+                      prevConfig.filter((day) => day !== dateValue),
+                    )
+                  }
+
+                  if (newSpecificDays.length >= 7 && config.length === 7) {
+                    // Message for 7 day limit
+                    setPassSpecificDaysLimitMessage(
+                      'You can only select up to 7 days',
+                    )
+                  } else if (newSpecificDays.length < 1) {
+                    // Message for at least 1 day
+                    setPassSpecificDaysLimitMessage(
+                      'You must choose at least 1 day',
+                    )
+                  } else {
+                    setPassSpecificDaysLimitMessage('')
+                  }
+                  console.log('New specific days: ', newSpecificDays)
+                }}
+                tileClassName={({ activeStartDate, date, view }) => {
+                  if (Date.now() > date.getTime()) {
+                    return 'disabled'
+                  }
+                  return view === 'month' && config.includes(date.toString())
+                    ? 'active'
+                    : null
+                }}
+                view="month"
+              />
+
+              <p className="text-error">{passSpecificDaysLimitMessage}</p>
+            </div>
           ) : (
             <div //Days of the week
               className="join w-full"
@@ -196,7 +222,7 @@ const EventForm = ({
                   type="checkbox"
                   name="options"
                   aria-label={day}
-                  checked={daysOfWeek?.includes(day) || false}
+                  checked={config?.includes(day) || false}
                   onChange={() => handleChange(day)}
                 />
               ))}

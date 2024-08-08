@@ -6,21 +6,16 @@ interface GridProps {
   earliestTime: string
   latestTime: string
   isAvailable: boolean // Determines if the grid is selectable (selection mode)
-  daysOfWeek: string[]
+  config: string[]
 }
 
-const Grid = ({
-  earliestTime,
-  latestTime,
-  isAvailable,
-  daysOfWeek,
-}: GridProps) => {
+const Grid = ({ earliestTime, latestTime, isAvailable, config }: GridProps) => {
   // Generate time array for row headings
   const timeArray = generateTimeRange(earliestTime, latestTime)
 
   // Grid dimensions
   const dimensions = {
-    width: daysOfWeek.length || 1, // default to 1 if daysOfWeek is empty
+    width: config.length || 1, // default to 1 if daysOfWeek is empty
     height: timeArray.length,
   }
 
@@ -37,7 +32,7 @@ const Grid = ({
   // Update grid dimensions when daysOfWeek changes
   useEffect(() => {
     setGrid(initialGrid())
-  }, [daysOfWeek.length, timeArray.length])
+  }, [config.length, timeArray.length])
 
   // Function is called when the mouse is pressed down on a cell
   const handleMouseDown = (rowIndex: number, colIndex: number) => {
@@ -108,7 +103,7 @@ const Grid = ({
               gridTemplateColumns: `repeat(${dimensions.width}, 1fr)`,
             }}
           >
-            {daysOfWeek.map((day, index) => (
+            {config.map((day, index) => (
               <div
                 key={index}
                 className="flex items-center justify-center border-gray-300 text-sm text-gray-600"

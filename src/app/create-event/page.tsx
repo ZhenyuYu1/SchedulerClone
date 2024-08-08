@@ -15,9 +15,7 @@ export default function CreateEvent() {
   const [earliestTime, setEarliestTime] = useState('9:00 AM')
   const [latestTime, setLatestTime] = useState('5:00 PM')
   const [mode, setMode] = useState('weekly')
-  const [config, setConfig] = useState<JSON | null>(null)
-  const [daysOfWeek, setDaysOfWeek] = useState<string[] | null>(null)
-  const [specificDays, setSpecificDays] = useState<Number[]>([])
+  const [config, setConfig] = useState<string[]>([])
   const [timezone, setTimezone] = useState('')
 
   const [isAvailable, setIsAvailable] = useState(false) // set to true when name is entered at sign in
@@ -50,7 +48,7 @@ export default function CreateEvent() {
     console.log(`Earliest Time: ${earliestTime}`)
     console.log(`Latest Time: ${latestTime}`)
     console.log(`Mode: ${mode}`)
-    console.log(`DaysOfWeek: ${daysOfWeek}`)
+    console.log(`Config: ${config}`)
     console.log(`Timezone: ${timezone}`)
 
     const daysOfWeekJSON: { [key: string]: boolean } = {
@@ -63,13 +61,26 @@ export default function CreateEvent() {
       Sun: false,
     }
 
-    if (daysOfWeek) {
-      daysOfWeek.forEach((day) => {
+    const configJSON: { [key: string]: string[] } = {
+      days: [],
+    }
+
+    if (mode === 'weekly') {
+      config.forEach((day) => {
         if (daysOfWeekJSON.hasOwnProperty(day)) {
           daysOfWeekJSON[day] = true
         }
       })
+    } else {
+      config.forEach((day) => {
+        configJSON.days.push(day)
+      })
     }
+
+    console.log(
+      'Specific Days: ',
+      JSON.parse(JSON.stringify({ days: configJSON.days })),
+    )
 
     addUserCreateEvent(
       title,
@@ -80,8 +91,8 @@ export default function CreateEvent() {
       timezone,
       mode,
       mode === 'weekly'
-        ? daysOfWeekJSON
-        : JSON.parse('{"days": ["2024-01-01"]}'), // filler for specific mode now because no calendar yet
+        ? daysOfWeekJSON // for days of the week {Mon: true, Tue: false, ...}
+        : JSON.parse(JSON.stringify({ days: configJSON.days })), // for specific days {days: [1, 2, 3, ...]}, days are numbers
     )
 
     // Call handleSaveResponse to save the response
@@ -117,10 +128,8 @@ export default function CreateEvent() {
           setLatestTime={setLatestTime}
           mode={mode}
           setMode={setMode}
-          daysOfWeek={daysOfWeek}
-          setDaysOfWeek={setDaysOfWeek}
-          specificDays={specificDays}
-          setSpecificDays={setSpecificDays}
+          config={config}
+          setConfig={setConfig}
           timezone={timezone}
           setTimezone={setTimezone}
         />
@@ -173,7 +182,7 @@ export default function CreateEvent() {
           earliestTime={earliestTime}
           latestTime={latestTime}
           isAvailable={isAvailable}
-          daysOfWeek={daysOfWeek || []}
+          config={config}
         />
 
         {isButtonsVisible && ( // Conditionally render buttons section
