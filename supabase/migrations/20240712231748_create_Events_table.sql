@@ -10,6 +10,4 @@ timezone text,
 mode text,
 config json,
 creator uuid references Users(id),
--- new column to to create a link that can be shared
-shareable_link text
 );

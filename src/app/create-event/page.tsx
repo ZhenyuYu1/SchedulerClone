@@ -49,15 +49,6 @@ export default function CreateEvent() {
 
   // Create Event Button function
   const handleSubmit = async () => {
-    console.log(`Title: ${title}`)
-    console.log(`Description: ${description}`)
-    console.log(`Location: ${location}`)
-    console.log(`Earliest Time: ${earliestTime}`)
-    console.log(`Latest Time: ${latestTime}`)
-    console.log(`Mode: ${mode}`)
-    console.log(`DaysOfWeek: ${daysOfWeek}`)
-    console.log(`Timezone: ${timezone}`)
-
     const daysOfWeekJSON: { [key: string]: boolean } = {
       Mon: false,
       Tue: false,

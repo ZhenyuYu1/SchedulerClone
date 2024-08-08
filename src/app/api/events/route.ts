@@ -11,12 +11,7 @@ export async function GET(request: Request) {
   const creatorId = url.searchParams.get('creatorId')
   const eventId = url.searchParams.get('eventId')
 
-  console.log(creatorId)
-  console.log(eventId)
-
   if (creatorId !== null) {
-    console.log('in creatorId')
-
     const { data, error } = await supabase
       .from('events')
       .select()

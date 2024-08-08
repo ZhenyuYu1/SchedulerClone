@@ -1,7 +1,6 @@
 'use client'
 
 import { Toaster, toast } from 'react-hot-toast'
-import EventCard from '@/components/EventCard'
 import React from 'react'
 
 const ViewEvent = () => {

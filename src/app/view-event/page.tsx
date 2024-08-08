@@ -6,17 +6,16 @@ import { useEffect, useState } from 'react'
 import EventCard from '@/components/EventCard'
 import { useSearchParams } from 'next/navigation'
 
-//const ViewEvent = ({ eventId: any }) => {
 const ViewEvent = () => {
   const searchParams = useSearchParams()
 
   const eventId = searchParams.get('eventId')
-  // State to hold the event URL
-  const [eventUrl, setEventUrl] = useState('')
+
   const [events, setEvents] = useState<any[]>([])
 
+  const [error, setError] = useState<string | null>(null)
+
   useEffect(() => {
-    console.log('Event ID in URL is ' + eventId)
     const getTheEvent = async () => {
       fetch(`/api/events?eventId=${eventId}`, {
         method: 'GET',
@@ -33,30 +32,40 @@ const ViewEvent = () => {
           return response.json()
         })
         .then((data) => {
-          console.log(data)
           setEvents(data)
         })
         .catch((error) => {
+          setError(error.message)
           console.error('Error:', error.message)
         })
     }
 
-    getTheEvent() // filler UUID for now until local storage is setup
-  }, [])
+    if (eventId) {
+      getTheEvent()
+    } else {
+      setError('No event found')
+    }
+  }, [eventId])
+
+  if (error) {
+    return <div>Error: {error}</div>
+  }
+
+  if (events.length === 0) {
+    return <div>No events found</div>
+  }
 
   return (
     <div>
-      {/* <EventView eventId='39ae671a-21f0-40f2-b901-963317c0c974' /> */}
       <EventView />
-      {events.length > 0 &&
-        events.map((event) => (
-          <EventCard
-            title={event.title}
-            starttime={event.starttime}
-            endtime={event.endtime}
-            key={event.id}
-          />
-        ))}
+      {events.map((event) => (
+        <EventCard
+          title={event.title}
+          starttime={event.starttime}
+          endtime={event.endtime}
+          key={event.id}
+        />
+      ))}
     </div>
   )
 }
