@@ -1,15 +1,25 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import { generateTimeRange } from '@/utils/timeUtils'
+import { months } from '@/utils/dateUtils'
 
 interface GridProps {
   earliestTime: string
   latestTime: string
   isAvailable: boolean // Determines if the grid is selectable (selection mode)
+  mode: string
   config: string[]
+  setConfig: React.Dispatch<React.SetStateAction<string[]>>
 }
 
-const Grid = ({ earliestTime, latestTime, isAvailable, config }: GridProps) => {
+const Grid = ({
+  earliestTime,
+  latestTime,
+  isAvailable,
+  mode,
+  config,
+  setConfig,
+}: GridProps) => {
   // Generate time array for row headings
   const timeArray = generateTimeRange(earliestTime, latestTime)
 
@@ -28,10 +38,27 @@ const Grid = ({ earliestTime, latestTime, isAvailable, config }: GridProps) => {
 
   const [grid, setGrid] = useState(initialGrid)
   const [isSelecting, setIsSelecting] = useState(false)
+  const [dates, setDates] = useState<string[]>([])
 
   // Update grid dimensions when daysOfWeek changes
   useEffect(() => {
     setGrid(initialGrid())
+    if (mode === 'weekly') {
+      const order = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+      config = config.sort((a, b) => order.indexOf(a) - order.indexOf(b))
+      setDates(config)
+    } else {
+      // Sort dates in ascending order
+      let newConfig = config
+      newConfig = config.sort(
+        (a, b) => new Date(a).getTime() - new Date(b).getTime(),
+      )
+      newConfig = newConfig.map(
+        (date) =>
+          months[new Date(date).getMonth()] + ' ' + new Date(date).getDate(),
+      )
+      setDates(newConfig)
+    }
   }, [config.length, timeArray.length])
 
   // Function is called when the mouse is pressed down on a cell
@@ -103,7 +130,7 @@ const Grid = ({ earliestTime, latestTime, isAvailable, config }: GridProps) => {
               gridTemplateColumns: `repeat(${dimensions.width}, 1fr)`,
             }}
           >
-            {config.map((day, index) => (
+            {dates.map((day, index) => (
               <div
                 key={index}
                 className="flex items-center justify-center border-gray-300 text-sm text-gray-600"

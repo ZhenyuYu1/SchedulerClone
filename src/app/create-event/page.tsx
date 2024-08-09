@@ -182,7 +182,9 @@ export default function CreateEvent() {
           earliestTime={earliestTime}
           latestTime={latestTime}
           isAvailable={isAvailable}
+          mode={mode}
           config={config}
+          setConfig={setConfig}
         />
 
         {isButtonsVisible && ( // Conditionally render buttons section

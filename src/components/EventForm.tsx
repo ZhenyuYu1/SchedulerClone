@@ -138,6 +138,7 @@ const EventForm = ({
             className={`btn ${mode === 'weekly' ? 'btn-active' : ''}`}
             onClick={() => {
               setMode('weekly')
+              setConfig([])
             }}
           >
             Weekly Days
@@ -145,7 +146,10 @@ const EventForm = ({
           <button
             type="button"
             className={`btn ${mode === 'specific' ? 'btn-active' : ''}`}
-            onClick={() => setMode('specific')}
+            onClick={() => {
+              setMode('specific')
+              setConfig([])
+            }}
           >
             Specific Days
           </button>
