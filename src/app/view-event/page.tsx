@@ -1,8 +1,7 @@
 'use client'
 import { UUID } from 'crypto'
-
 import EventView from '@/components/EventView'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import EventCard from '@/components/EventCard'
 import { useSearchParams } from 'next/navigation'
 
@@ -51,10 +50,6 @@ const ViewEvent = () => {
     return <div>Error: {error}</div>
   }
 
-  if (events.length === 0) {
-    return <div>No events found</div>
-  }
-
   return (
     <div>
       <EventView />
@@ -70,4 +65,10 @@ const ViewEvent = () => {
   )
 }
 
-export default ViewEvent
+const ViewEventWrapper = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <ViewEvent />
+  </Suspense>
+)
+
+export default ViewEventWrapper
