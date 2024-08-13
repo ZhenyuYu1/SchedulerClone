@@ -1,8 +1,15 @@
-# Finding A Time
+<p align="center">
+  <img alt="GitHub License" src="https://img.shields.io/github/license/FindingATime/FindingATime">
+  <a href="https://github.com/FindingATime/FindingATime"><img src="https://img.shields.io/github/stars/FindingATime/FindingATime.svg?style=flat-square&logo=github&label=Stars&logoColor=white" alt="GitHub stars"></a>
+  <a href="https://github.com/FindingATime/FindingATime/issues"><img src="https://img.shields.io/github/issues/FindingATime/FindingATime.svg?style=flat-square" alt="GitHub Issues"></a>
+</p>
+
+# Overview
 
 An app that makes it easy to schedule meetings with others.
 
 ## Quick Start
+
 Clone repository with: `git clone https://github.com/FindingATime/FindingATime`
 
 Run `supabase start`
@@ -13,8 +20,8 @@ Run `pnpm run dev`
 
 Visit local <a href="http://localhost:3000"><strong>Site</strong></a> ·
 
-
 ## Built With
+
 - ⚡️ Next.js 14 (App Router)
 - 💚 Supabase w/ supabase-ssr - Works across the entire [Next.js](https://nextjs.org) stack (App Router, Pages Router, Client, Server, Middleware, It just works!)
 - ⚛️ React 18
@@ -57,13 +64,11 @@ Visit local <a href="http://localhost:3000"><strong>Site</strong></a> ·
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for more information.
-
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for more information.
 
 ## Attributions
 
 Finding A Time uses the [SupaNext Starter Kit](https://github.com/michaeltroya/supa-next-starter).
 ![image](https://github.com/michaeltroya/supa-next-starter/assets/38507347/2ea40874-98de-49ec-ab6a-74c816e6ca22)
-
 
 Made with 💖 as part of Code Day Labs.
