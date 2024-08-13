@@ -2,8 +2,8 @@
 
 An app that makes it easy to schedule meetings with others.
 
-##Quick Start
-Clone repository.
+## Quick Start
+Clone repository with: `git clone https://github.com/FindingATime/FindingATime`
 
 Run `supabase start`
 
