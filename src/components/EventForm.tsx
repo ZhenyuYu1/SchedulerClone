@@ -222,7 +222,7 @@ const EventForm = ({
               {days.map((day) => (
                 <input
                   key={day}
-                  className="btn join-item border-gray-300 bg-white"
+                  className="btn join-item border-gray-300 bg-white p-3 text-sm"
                   type="checkbox"
                   name="options"
                   aria-label={day}

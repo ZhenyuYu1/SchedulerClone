@@ -1,7 +1,7 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { randomUUID, UUID } from 'crypto'
-import { addUserCreateEvent } from '@/utils/userUtils'
+import { addUserCreateEvent, getUser } from '@/utils/userUtils'
 import { insertEvent } from '@/utils/eventsUtils'
 import { useRouter } from 'next/navigation'
 
@@ -25,6 +25,23 @@ export default function CreateEvent() {
   const dialogRef = useRef<HTMLDialogElement>(null) // modal
 
   const [isButtonsVisible, setIsButtonsVisible] = useState(false) // New state to control visibility of buttons
+
+  useEffect(() => {
+    // Check if user is signed in
+    getUser(localStorage.getItem('username') as UUID)
+      .then((data) => {
+        if (data) {
+          setUserName(data[0].name)
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error.message)
+      })
+
+    if (localStorage.getItem('username')) {
+      setUserName(localStorage.getItem('username') as string)
+    }
+  }, [])
 
   /* 
     Add userName to responders array when they click the "Save" button 
@@ -75,6 +92,7 @@ export default function CreateEvent() {
 
     try {
       const data = await addUserCreateEvent(
+        userName,
         title,
         description,
         earliestTime,
@@ -103,8 +121,12 @@ export default function CreateEvent() {
 
   // Function to open modal for after clicking "Sign In"
   const openModal = () => {
-    if (dialogRef.current) {
+    if (dialogRef.current && userName === '') {
+      console.log('Opening modal')
       dialogRef.current.showModal()
+    } else {
+      setIsAvailable(true)
+      setIsButtonsVisible(true)
     }
   }
 
@@ -133,16 +155,17 @@ export default function CreateEvent() {
           timezone={timezone}
           setTimezone={setTimezone}
         />
-
         <div //button container for positioning button
           className="mx-4 flex justify-center pt-8"
         >
-          <button
-            className="btn btn-primary ml-4 rounded-full px-4 py-2 text-white"
-            onClick={openModal}
-          >
-            Add Availability
-          </button>
+          {!isButtonsVisible && (
+            <button
+              className="btn btn-primary ml-4 rounded-full px-4 py-2 text-white"
+              onClick={openModal}
+            >
+              Add Availability
+            </button>
+          )}
 
           <dialog ref={dialogRef} id="username_modal" className="modal">
             <div className="modal-box bg-white focus:outline-white ">
@@ -151,6 +174,7 @@ export default function CreateEvent() {
               <input
                 type="text"
                 placeholder="Enter Your Name"
+                value={userName}
                 className="input input-bordered w-full max-w-xs bg-white py-4"
                 onChange={(e) => {
                   setUserName(e.target.value)
@@ -196,6 +220,8 @@ export default function CreateEvent() {
               onClick={() => {
                 setIsAvailable(false)
                 setIsButtonsVisible(false)
+                // Clear username if user cancels and ask them again
+                setUserName('')
               }} // Set availability to false when user cancels
             >
               Cancel

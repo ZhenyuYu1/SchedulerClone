@@ -13,12 +13,15 @@ import Link from 'next/link'
 import { Event } from '@/utils/eventsUtils'
 
 export default function Index() {
-  const [myEvents, setMyEvents] = useState<any[]>([])
+  const [myEvents, setMyEvents] = useState<any[] | null>(null)
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const getMyEvents = async (creatorId: UUID) => {
+      const delay = (ms: number) =>
+        new Promise((resolve) => setTimeout(resolve, ms))
+      await delay(2000)
       fetch(`/api/events?creatorId=${creatorId}`, {
         method: 'GET',
         headers: {
@@ -65,23 +68,25 @@ export default function Index() {
               <button className="btn btn-primary ml-6">+ New Event</button>
             </Link>
           </div>
-          {myEvents.length > 0 ? (
-            <div className="grid grid-cols-3 gap-4">
-              {myEvents.map((event) => (
-                <EventCard
-                  eventId={event.id}
-                  title={event.title}
-                  starttime={event.starttime}
-                  endtime={event.endtime}
-                  date={null}
-                  days={null}
-                  key={event.id}
-                />
-              ))}
-            </div>
-          ) : (
-            <p>No events found. Press &apos;New Event&apos; to create one!</p>
-          )}
+          <Suspense fallback={<p>Loading events...</p>}>
+            {myEvents && myEvents.length > 0 ? (
+              <div className="grid grid-cols-3 gap-4">
+                {myEvents?.map((event) => (
+                  <EventCard
+                    eventId={event.id}
+                    title={event.title}
+                    starttime={event.starttime}
+                    endtime={event.endtime}
+                    date={null}
+                    days={null}
+                    key={event.id}
+                  />
+                ))}
+              </div>
+            ) : (
+              <p>No events found. Press &apos;New Event&apos; to create one!</p>
+            )}
+          </Suspense>
         </div>
         <div className="w-1/4 border-l border-gray-300 bg-white p-4 pl-8">
           <h1 className="mb-4 text-xl font-bold">Recently Viewed Events</h1>
