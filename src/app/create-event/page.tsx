@@ -20,20 +20,17 @@ export default function CreateEvent() {
   const [config, setConfig] = useState<string[]>([])
   const [timezone, setTimezone] = useState('')
 
-  const [isAvailable, setIsAvailable] = useState(false) // set to true when name is entered at sign in
+  const [isAvailable, setIsAvailable] = useState(false) // set to true when name is entered at sign in, Determines if the grid is selectable (selection mode)
   const [userName, setUserName] = useState('') // set to name entered at sign in
-  const [responders, setResponders] = useState<string[]>([]) // array to store names of users who signed in
   const dialogRef = useRef<HTMLDialogElement>(null) // modal
 
   const [isButtonsVisible, setIsButtonsVisible] = useState(false) // New state to control visibility of buttons
 
-  /* 
-    Add userName to responders array when they click the "Save" button 
-   */
-
   //added router to redirect to view-event page after creating event
   const router = useRouter()
 
+  // TODO: append local to remote api call for selecting all responder usernames
+  /*
   const handleSaveResponse = () => {
     if (userName) {
       setResponders((prevResponders) => {
@@ -45,6 +42,7 @@ export default function CreateEvent() {
       }
     }
   }
+  */
 
   // Create Event Button function
   const handleSubmit = async () => {
@@ -95,11 +93,9 @@ export default function CreateEvent() {
         console.error('Unexpected error:', error)
       }
     }
-
-    // Call handleSaveResponse to save the response
-    handleSaveResponse()
+    // handleSaveResponse() // Call handleSaveResponse to save the response
     setIsAvailable(false) // Set availability to false when user creates event/saves their availability
-    setIsButtonsVisible(false) // Hide buttons after creating event
+    setIsButtonsVisible(false) // Hide buttons after user creates event
   }
 
   // Function to open modal for after clicking "Sign In"
@@ -140,12 +136,14 @@ export default function CreateEvent() {
           <div //button container for positioning button
             className="mx-4 flex justify-center pt-8"
           >
-            <button
-              className="btn btn-primary ml-4 rounded-full px-4 py-2 text-white"
-              onClick={openModal}
-            >
-              Add Availability
-            </button>
+            {!isAvailable && ( //"Add Availability" button is only visible when user has not signed in and added their availability
+              <button
+                className="btn btn-primary ml-4 rounded-full px-4 py-2 text-white"
+                onClick={openModal}
+              >
+                Add Availability
+              </button>
+            )}
 
             <dialog ref={dialogRef} id="username_modal" className="modal">
               <div className="modal-box bg-white focus:outline-white ">
@@ -157,7 +155,7 @@ export default function CreateEvent() {
                   className="input input-bordered w-full max-w-xs bg-white py-4"
                   onChange={(e) => {
                     setUserName(e.target.value)
-                  }} // Update isAvailable to true when name is entered
+                  }}
                 />
 
                 <div className="modal-action">
@@ -165,7 +163,7 @@ export default function CreateEvent() {
                     <button
                       className="btn btn-primary ml-4 rounded-full px-4 py-2 text-white"
                       onClick={() => {
-                        setIsAvailable(true)
+                        setIsAvailable(true) // Update isAvailable to true when name is entered
                         setIsButtonsVisible(true) // Show buttons when user signs in
                       }}
                     >
@@ -191,19 +189,9 @@ export default function CreateEvent() {
           />
 
           {isButtonsVisible && ( // Conditionally render buttons section
-            <div //button container for positioning "Save" and "Cancel" buttons
+            <div //button container for positioning "Create Event" button
               className="flex flex-row justify-center gap-4 pt-8 "
             >
-              <button
-                className="btn btn-outline rounded-full px-4 py-2 text-red-400 hover:!border-red-400 hover:bg-red-300"
-                onClick={() => {
-                  setIsAvailable(false)
-                  setIsButtonsVisible(false)
-                }} // Set availability to false when user cancels
-              >
-                Cancel
-              </button>
-
               <button
                 className="btn btn-primary rounded-full px-4 py-2 text-white"
                 onClick={handleSubmit}
@@ -217,7 +205,7 @@ export default function CreateEvent() {
         <section //Right side container (Responses)
           className="w-full py-8 md:w-[13%]"
         >
-          <Responses responders={responders} />
+          <Responses responders={[]} />
         </section>
       </div>
     </div>
