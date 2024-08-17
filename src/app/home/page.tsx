@@ -10,7 +10,7 @@ import ThemeToggle from '@/components/ThemeToggle'
 import { Suspense, useEffect, useState } from 'react'
 import { UUID } from 'crypto'
 import Link from 'next/link'
-import { Event } from '@/utils/eventsUtils'
+import { Event, getMyEvents } from '@/utils/eventsUtils'
 
 export default function Index() {
   const [myEvents, setMyEvents] = useState<any[]>([])
@@ -18,36 +18,20 @@ export default function Index() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const getMyEvents = async (creatorId: UUID) => {
-      const delay = (ms: number) =>
-        new Promise((resolve) => setTimeout(resolve, ms))
-      await delay(2000)
-      fetch(`/api/events?creatorId=${creatorId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-        .then((response) => {
-          if (!response.ok) {
-            return response.json().then((err) => {
-              throw new Error(err.message)
-            })
-          }
-          return response.json()
-        })
+    if (localStorage.getItem('username')) {
+      getMyEvents(localStorage.getItem('username') as UUID)
         .then((data) => {
           setMyEvents(data)
-          console.log('Success:', data)
+          setIsLoading(false) // Move setIsLoading here
         })
         .catch((error) => {
           console.error('Error:', error.message)
+          setIsLoading(false) // Ensure loading state is updated even on error
         })
+    } else {
+      setIsLoading(false) // Ensure loading state is updated if no username
     }
 
-    if (localStorage.getItem('username')) {
-      getMyEvents(localStorage.getItem('username') as UUID)
-    }
     if (localStorage.getItem('FindingATimeRecentlyViewed')) {
       setUpcomingEvents(
         JSON.parse(
@@ -55,7 +39,6 @@ export default function Index() {
         ) as Event[],
       )
     }
-    setIsLoading(false)
   }, [])
 
   return (
@@ -70,7 +53,9 @@ export default function Index() {
                 <button className="btn btn-primary ml-6">+ New Event</button>
               </Link>
             </div>
-            {myEvents.length > 0 ? (
+            {isLoading ? (
+              <p>Loading...</p>
+            ) : myEvents.length > 0 ? (
               <div className="grid grid-cols-3 gap-4">
                 {myEvents.map((event) => (
                   <EventCard
@@ -90,26 +75,26 @@ export default function Index() {
           </div>
           <div className="w-1/4 border-l border-gray-300 bg-white p-4 pl-8">
             <h1 className="mb-4 text-xl font-bold">Recently Viewed Events</h1>
-            <Suspense fallback={<p>Loading...</p>}>
-              {!isLoading && upcomingEvents.length === 0 ? (
-                <p>No recently viewed events.</p>
-              ) : (
-                upcomingEvents.map((event) => (
-                  <div key={event.id}>
-                    <EventCard
-                      eventId={event.id}
-                      title={event.title}
-                      starttime={event.starttime}
-                      endtime={event.endtime}
-                      date={null}
-                      days={null}
-                      key={event.id}
-                    />
-                    <div className="mb-4"></div>
-                  </div>
-                ))
-              )}
-            </Suspense>
+            {isLoading ? (
+              <p>Loading...</p>
+            ) : upcomingEvents.length === 0 ? (
+              <p>No recently viewed events.</p>
+            ) : (
+              upcomingEvents.map((event) => (
+                <div key={event.id}>
+                  <EventCard
+                    eventId={event.id}
+                    title={event.title}
+                    starttime={event.starttime}
+                    endtime={event.endtime}
+                    date={null}
+                    days={null}
+                    key={event.id}
+                  />
+                  <div className="mb-4"></div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

@@ -71,10 +71,7 @@ export async function getEvent(eventId: UUID) {
 }
 
 export const getMyEvents = async (creatorId: UUID) => {
-  setTimeout(() => {
-    console.log('Getting events for creatorId:', creatorId)
-  }, 10000)
-  fetch(`/api/events?creatorId=${creatorId}`, {
+  return fetch(`/api/events?creatorId=${creatorId}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -90,8 +87,10 @@ export const getMyEvents = async (creatorId: UUID) => {
     })
     .then((data) => {
       console.log('Success:', data)
+      return data
     })
     .catch((error) => {
       console.error('Error:', error.message)
+      return error
     })
 }
