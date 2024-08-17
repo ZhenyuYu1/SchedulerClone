@@ -22,14 +22,14 @@ export default function Index() {
       getMyEvents(localStorage.getItem('username') as UUID)
         .then((data) => {
           setMyEvents(data)
-          setIsLoading(false) // Move setIsLoading here
+          setIsLoading(false)
         })
         .catch((error) => {
           console.error('Error:', error.message)
-          setIsLoading(false) // Ensure loading state is updated even on error
+          setIsLoading(false)
         })
     } else {
-      setIsLoading(false) // Ensure loading state is updated if no username
+      setIsLoading(false)
     }
 
     if (localStorage.getItem('FindingATimeRecentlyViewed')) {
