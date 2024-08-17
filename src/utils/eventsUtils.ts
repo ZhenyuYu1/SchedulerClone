@@ -6,6 +6,8 @@ export interface Event {
   title: string
   starttime: string
   endtime: string
+  config: { [key: string]: boolean }
+  mode: string
 }
 
 export async function insertEvent(
