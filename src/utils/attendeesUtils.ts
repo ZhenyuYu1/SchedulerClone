@@ -7,7 +7,7 @@ export interface Attendee {
       beginning: string
       end: string
       type: string
-    }
+    }[]
   }
 }
 

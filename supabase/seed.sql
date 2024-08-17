@@ -69,13 +69,13 @@ values
     "Mon": [],
     "Tue": [
       {
-        "beginning":"09:00",
-        "end":"10:00",
+        "beginning":"9:00 AM",
+        "end":"10:00 AM",
         "type":"Preferred"
       },
       {
-        "beginning":"11:00",
-        "end":"12:00",
+        "beginning":"11:00 AM",
+        "end":"12:00 PM",
         "type":"Regular"
         }
       ], 
@@ -92,13 +92,13 @@ values
     "Mon": [],
     "Tue": [
       {
-        "beginning":"09:00",
-        "end":"10:00",
+        "beginning":"9:00 AM",
+        "end":"10:00 AM",
         "type":"Preferred"
       },
       {
-        "beginning":"11:00",
-        "end":"12:00",
+        "beginning":"11:00 AM",
+        "end":"12:00 PM",
         "type":"Regular"
         }
       ], 
@@ -115,13 +115,13 @@ values
     "Aug 10": [],
     "Aug 11": [
       {
-        "beginning":"09:00",
-        "end":"10:00",
+        "beginning":"9:00 AM",
+        "end":"10:00 AM",
         "type":"Preferred"
       },
       {
-        "beginning":"11:00",
-        "end":"12:00",
+        "beginning":"11:00 AM",
+        "end":"12:00 PM",
         "type":"Regular"
         }
       ], 
@@ -135,13 +135,13 @@ values
     "Aug 10": [],
     "Aug 11": [
       {
-        "beginning":"09:00",
-        "end":"10:00",
+        "beginning":"9:00 AM",
+        "end":"10:00 AM",
         "type":"Preferred"
       },
       {
-        "beginning":"11:00",
-        "end":"12:00",
+        "beginning":"11:00 AM",
+        "end":"12:00 PM",
         "type":"Regular"
         }
       ], 
