@@ -1,7 +1,7 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { randomUUID, UUID } from 'crypto'
-import { addUserCreateEvent } from '@/utils/userUtils'
+import { addUserCreateEvent, getUser } from '@/utils/userUtils'
 import { insertEvent } from '@/utils/eventsUtils'
 import { useRouter } from 'next/navigation'
 
@@ -26,6 +26,23 @@ export default function CreateEvent() {
 
   const [isButtonsVisible, setIsButtonsVisible] = useState(false) // New state to control visibility of buttons
 
+  useEffect(() => {
+    // Check if user is signed in
+    getUser(localStorage.getItem('username') as UUID)
+      .then((data) => {
+        if (data) {
+          setUserName(data[0].name)
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error.message)
+      })
+
+    if (localStorage.getItem('username')) {
+      setUserName(localStorage.getItem('username') as string)
+    }
+  }, [])
+
   //added router to redirect to view-event page after creating event
   const router = useRouter()
 
@@ -46,6 +63,7 @@ export default function CreateEvent() {
 
   // Create Event Button function
   const handleSubmit = async () => {
+    console.log('Username: ', userName)
     const daysOfWeekJSON: { [key: string]: boolean } = {
       Mon: false,
       Tue: false,
@@ -74,6 +92,7 @@ export default function CreateEvent() {
 
     try {
       const data = await addUserCreateEvent(
+        userName,
         title,
         description,
         earliestTime,
@@ -100,8 +119,12 @@ export default function CreateEvent() {
 
   // Function to open modal for after clicking "Sign In"
   const openModal = () => {
-    if (dialogRef.current) {
+    if (dialogRef.current && userName === '') {
+      console.log('Opening modal')
       dialogRef.current.showModal()
+    } else {
+      setIsAvailable(true)
+      setIsButtonsVisible(true)
     }
   }
 
@@ -153,6 +176,7 @@ export default function CreateEvent() {
                   type="text"
                   placeholder="Enter Your Name"
                   className="input input-bordered w-full max-w-xs bg-white py-4"
+                  value={userName}
                   onChange={(e) => {
                     setUserName(e.target.value)
                   }}
