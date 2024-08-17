@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
-import CalendarIcon from '../app/CalendarIcon.jpeg'
+import CalendarIcon from '../app/CalendarIcon.png'
 
 export default function Header() {
   const [currentPath, setCurrentPath] = useState('')
