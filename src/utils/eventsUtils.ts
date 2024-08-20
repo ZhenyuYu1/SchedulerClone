@@ -69,3 +69,28 @@ export async function getEvent(eventId: UUID) {
       return error
     })
 }
+
+export const getMyEvents = async (creatorId: UUID) => {
+  return fetch(`/api/events?creatorId=${creatorId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        return response.json().then((err) => {
+          throw new Error(err.message)
+        })
+      }
+      return response.json()
+    })
+    .then((data) => {
+      console.log('Success:', data)
+      return data
+    })
+    .catch((error) => {
+      console.error('Error:', error.message)
+      return error
+    })
+}

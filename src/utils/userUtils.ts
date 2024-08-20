@@ -56,6 +56,7 @@ export async function getUser(userId: UUID) {
 }
 
 export async function addUserCreateEvent(
+  username: string,
   title: string,
   description: string,
   starttime: string,
@@ -72,9 +73,7 @@ export async function addUserCreateEvent(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        name: localStorage.getItem('username')
-          ? localStorage.getItem('username')
-          : 'Guest',
+        name: username,
       }),
     })
       .then((response) => {

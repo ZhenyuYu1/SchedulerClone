@@ -4,6 +4,7 @@ import NextTopLoader from 'nextjs-toploader'
 import './globals.css'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import ReactQueryProvider from '@/providers/ReactQueryProvider'
+import Consent from '@/components/Consent'
 
 const defaultUrl = process.env.HOST_URL
   ? `https://${process.env.HOST_URL}`
@@ -35,6 +36,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ReactQueryProvider>
+            <Consent />
             <main className="flex min-h-screen flex-col items-center">
               {children}
             </main>
