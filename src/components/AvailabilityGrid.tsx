@@ -2,24 +2,21 @@
 import React, { useState, useEffect } from 'react'
 import { generateTimeRange } from '@/utils/timeUtils'
 import { months } from '@/utils/dateUtils'
+import { addAttendee, TimeSegment, Schedule } from '@/utils/attendeesUtils'
 
 interface GridProps {
   earliestTime: string
   latestTime: string
   isAvailable: boolean // Determines if the grid is selectable (selection mode)
+  responders?: {
+    users: { name: string }
+    timesegments: Schedule
+  }[]
   mode: string
   config: string[]
   setConfig: React.Dispatch<React.SetStateAction<string[]>>
-  responders?: {
-    users: { name: string }
-    timesegments: {
-      [key: string]: {
-        beginning: string
-        end: string
-        type: string
-      }[]
-    }
-  }[]
+  schedule: Schedule
+  setSchedule: React.Dispatch<React.SetStateAction<Schedule>>
   onCellHover?: (day: string, time: string) => void // Callback function when hovering over a cell
 }
 
@@ -27,10 +24,12 @@ const Grid = ({
   earliestTime,
   latestTime,
   isAvailable,
+  responders,
   mode,
   config,
   setConfig,
-  responders,
+  schedule,
+  setSchedule,
   onCellHover,
 }: GridProps) => {
   // Generate time array for row headings
@@ -39,7 +38,7 @@ const Grid = ({
   // Grid dimensions
   const dimensions = {
     width: config.length || 1, // default to 1 if daysOfWeek is empty
-    height: timeArray.length,
+    height: timeArray.length - 1,
   }
 
   // Function to Initialize and populate an empty 2d array
@@ -58,12 +57,20 @@ const Grid = ({
     colIndex: number
   } | null>(null)
 
+  const addDateToSchedule = (date: string, timeSegments: TimeSegment[]) => {
+    schedule[date] = timeSegments
+  }
+
   // Populate the grid with creator's availability times saved in the database (view-event)
   useEffect(() => {
     if (mode === 'weekly') {
       const order = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-      //const sortedConfig = config.sort((a, b) => order.indexOf(a) - order.indexOf(b))
-      setDates(config)
+      const sortedConfig = config.sort(
+        (a, b) => order.indexOf(a) - order.indexOf(b),
+      )
+      setDates(sortedConfig)
+      setSchedule({})
+      console.log('Dates updated: ', sortedConfig)
     } else {
       // Sort dates in ascending order
       let newConfig = config
@@ -75,6 +82,8 @@ const Grid = ({
           months[new Date(date).getMonth()] + ' ' + new Date(date).getDate(),
       )
       setDates(newConfig)
+      setSchedule({})
+      console.log('Dates updated: ', newConfig)
     }
 
     // Only populate grid if in view mode and responder's time segments is not empty
@@ -169,6 +178,47 @@ const Grid = ({
   const toggleCell = (rowIndex: number, colIndex: number) => {
     const newGrid = [...grid]
     newGrid[rowIndex][colIndex] = !newGrid[rowIndex][colIndex]
+    // console.log("Toggled cell at: ", rowIndex, colIndex)
+    // console.log("Date at colIndex: ", config[colIndex])
+    // console.log("Time at rowIndex: ", timeArray[rowIndex])
+    // console.log("Time at rowIndex + 1: ", timeArray[rowIndex + 1])
+    // console.log("Timearray: ", timeArray)
+    // console.log("config[colIndex]: ", config[colIndex])
+    const selectedTimeSegment = {
+      beginning: timeArray[rowIndex],
+      end: timeArray[rowIndex + 1],
+      type: 'Regular',
+    }
+    console.log('selectedTimeSegment: ', selectedTimeSegment)
+    if (config[colIndex] in schedule) {
+      console.log('Date already in schedule: ', config[colIndex])
+      let timeSegments = schedule[config[colIndex]]
+      console.log('Timesegments before: ', timeSegments)
+
+      // Check if the time segment is already in the schedule
+      const segmentIndex = timeSegments.findIndex(
+        (timeSegment) =>
+          timeSegment.beginning === selectedTimeSegment.beginning &&
+          timeSegment.end === selectedTimeSegment.end,
+      )
+
+      if (segmentIndex !== -1) {
+        // Remove the time segment if it exists
+        timeSegments.splice(segmentIndex, 1)
+        console.log('Removed time segment: ', selectedTimeSegment)
+      } else {
+        // Add the time segment if it does not exist
+        timeSegments.push(selectedTimeSegment)
+        console.log('Added time segment: ', selectedTimeSegment)
+      }
+
+      console.log('Timesegments after: ', timeSegments)
+      schedule[config[colIndex]] = timeSegments
+    } else {
+      console.log('Date not in schedule: ', config[colIndex])
+      addDateToSchedule(config[colIndex], [selectedTimeSegment])
+    }
+    console.log('Schedule: ', schedule)
     setGrid(newGrid)
   }
 
@@ -187,15 +237,18 @@ const Grid = ({
             alignItems: 'flex-start',
           }}
         >
-          {timeArray.map((time, index) => (
-            <div
-              key={index}
-              className="flex items-start justify-end border-gray-300 pr-2 text-xs text-gray-600"
-              style={{ height: '64px', lineHeight: '64px' }}
-            >
-              {time}
-            </div>
-          ))}
+          {timeArray.map(
+            (time, index) =>
+              index !== timeArray.length && (
+                <div
+                  key={index}
+                  className="flex items-start justify-start border-gray-300 pr-2 text-xs text-gray-600"
+                  style={{ height: '64px', lineHeight: '64px' }}
+                >
+                  {time}
+                </div>
+              ),
+          )}
         </div>
 
         <div>
@@ -204,18 +257,26 @@ const Grid = ({
             className="grid-header"
             style={{
               display: 'grid',
-              gridTemplateColumns: `repeat(${dimensions.width}, 1fr)`,
+              gridTemplateColumns: `repeat(${dimensions.width || 1}, 1fr)`, // Ensure at least one column
             }}
           >
-            {dates.map((day, index) => (
+            {dates.length > 0 ? (
+              dates.map((day, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-center border-gray-300 text-sm text-gray-600"
+                  style={{ height: '2rem' }}
+                >
+                  {day}
+                </div>
+              ))
+            ) : (
+              // Placeholder for grid header (fixes alignment of times and grid rows when no dates are present)
               <div
-                key={index}
                 className="flex items-center justify-center border-gray-300 text-sm text-gray-600"
                 style={{ height: '2rem' }}
-              >
-                {day}
-              </div>
-            ))}
+              ></div>
+            )}
           </div>
 
           {/* Main Grid body cells for selecting and deselecting */}
@@ -226,7 +287,7 @@ const Grid = ({
             style={{
               display: 'grid',
               gridTemplateColumns: `repeat(${dimensions.width}, 1fr)`,
-              gridTemplateRows: `repeat(${dimensions.height}, 1fr)`,
+              gridTemplateRows: `repeat(${dimensions.height - 1}, 1fr)`,
               width: '100%',
               height: `${dimensions.height * 64 + 1}px`, // 64px height per row and add 1px to height to account for border
             }}
@@ -248,8 +309,16 @@ const Grid = ({
                       ? 'border-1 border-dashed ring-1 ring-gray-900 ring-opacity-10 drop-shadow-md hover:border-black'
                       : ''
                   }`}
-                  onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
-                  onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
+                  onMouseDown={
+                    dates.length > 0
+                      ? () => handleMouseDown(rowIndex, colIndex)
+                      : undefined
+                  }
+                  onMouseEnter={
+                    dates.length > 0
+                      ? () => handleMouseEnter(rowIndex, colIndex)
+                      : undefined
+                  }
                 ></div>
               )),
             )}

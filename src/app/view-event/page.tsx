@@ -4,8 +4,8 @@ import { Attendee, getAttendees } from '@/utils/attendeesUtils'
 
 import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { getEvent } from '@/utils/eventsUtils'
-import { Event } from '@/utils/eventsUtils'
+import { getEvent, Event } from '@/utils/eventsUtils'
+import { Schedule } from '@/utils/attendeesUtils'
 
 import Header from '@/components/Header'
 import EventView from '@/components/EventView'
@@ -19,6 +19,7 @@ const ViewEvent = () => {
   const [event, setEvent] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
   const [recentlyViewedEvents, setRecentlyViewedEvents] = useState<Event[]>([])
+  const [schedule, setSchedule] = useState<Schedule>({})
 
   const [isAvailable, setIsAvailable] = useState(false) // set to true when name is entered at sign in
   const [isButtonsVisible, setIsButtonsVisible] = useState(false) // New state to control visibility of buttons
@@ -153,10 +154,11 @@ const ViewEvent = () => {
               latestTime={event.endtime}
               isAvailable={isAvailable}
               responders={responders}
-              key={event.id}
               mode={event.mode}
               config={convertConfigToArray(event.config)}
               setConfig={event.setConfig}
+              schedule={schedule}
+              setSchedule={setSchedule}
               onCellHover={handleCellHover}
             />
           )}

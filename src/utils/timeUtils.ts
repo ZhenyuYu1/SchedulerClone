@@ -24,7 +24,7 @@ export const generateTimeRange = (
 
   // Populate the generateTimeRange array with times from start to end
   const generateTimeRange: string[] = []
-  for (let i = start; i <= end; i++) {
+  for (let i = start; i <= end + 1; i++) {
     generateTimeRange.push(times[i % 24])
   }
   //console.log generateTimeRange); // debug prints array

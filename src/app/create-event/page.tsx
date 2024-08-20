@@ -3,6 +3,7 @@ import { useState, useRef } from 'react'
 import { randomUUID, UUID } from 'crypto'
 import { addUserCreateEvent } from '@/utils/userUtils'
 import { insertEvent } from '@/utils/eventsUtils'
+import { addAttendee, Schedule } from '@/utils/attendeesUtils'
 import { useRouter } from 'next/navigation'
 
 import EventForm from '@/components/EventForm'
@@ -19,6 +20,7 @@ export default function CreateEvent() {
   const [mode, setMode] = useState('weekly')
   const [config, setConfig] = useState<string[]>([])
   const [timezone, setTimezone] = useState('')
+  const [schedule, setSchedule] = useState<Schedule>({})
 
   const [isAvailable, setIsAvailable] = useState(false) // set to true when name is entered at sign in, Determines if the grid is selectable (selection mode)
   const [userName, setUserName] = useState('') // set to name entered at sign in
@@ -73,7 +75,7 @@ export default function CreateEvent() {
     }
 
     try {
-      const data = await addUserCreateEvent(
+      await addUserCreateEvent(
         title,
         description,
         earliestTime,
@@ -84,8 +86,16 @@ export default function CreateEvent() {
         mode === 'weekly'
           ? daysOfWeekJSON // for days of the week {Mon: true, Tue: false, ...}
           : JSON.parse(JSON.stringify({ days: configJSON.days })), // for specific days {days: [1, 2, 3, ...]}, days are numbers
-      )
-      router.push(`/view-event?eventId=${data[0].id}`) // Redirects to the event view page using the eventId
+      ).then((data) => {
+        // Add attendee to the event
+        addAttendee(
+          data[0].id,
+          localStorage.getItem('username') as UUID,
+          schedule,
+        )
+        // Redirects to the event view page using the eventId
+        router.push(`/view-event?eventId=${data[0].id}`)
+      })
     } catch (error) {
       if (error instanceof Error) {
         console.error('Error:', error.message)
@@ -185,6 +195,8 @@ export default function CreateEvent() {
             isAvailable={isAvailable}
             mode={mode}
             config={config}
+            schedule={schedule}
+            setSchedule={setSchedule}
             setConfig={setConfig}
           />
 

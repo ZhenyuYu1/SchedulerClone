@@ -1,5 +1,33 @@
 import { UUID } from 'crypto'
 
+export interface TimeSegment {
+  beginning: string
+  end: string
+  type: string
+}
+
+export interface Schedule {
+  [date: string]: TimeSegment[]
+}
+
+// const schedule: Schedule = {
+//   "Aug 10": [],
+//   "Aug 11": [
+//     {
+//       beginning: "9:00 AM",
+//       end: "10:00 AM",
+//       type: "Preferred"
+//     },
+//     {
+//       beginning: "11:00 AM",
+//       end: "12:00 PM",
+//       type: "Regular"
+//     }
+//   ],
+//   "Aug 12": [],
+//   "Aug 15": []
+// };
+
 export interface Attendee {
   users: { name: string }
   timesegments: {
@@ -27,7 +55,7 @@ export async function getAttendees(eventid: UUID) {
       return response.json()
     })
     .then((data) => {
-      console.log('Data: ', data)
+      console.log('Attendees: ', data)
       return data
     })
     .catch((error) => {
@@ -36,9 +64,9 @@ export async function getAttendees(eventid: UUID) {
 }
 
 export async function addAttendee(
-  userId: UUID,
   eventid: UUID,
-  preferredTimes: JSON,
+  attendee: UUID,
+  timesegments: Schedule,
 ) {
   fetch('/api/attendees/create', {
     method: 'POST',
@@ -47,8 +75,8 @@ export async function addAttendee(
     },
     body: JSON.stringify({
       eventid: eventid,
-      userid: userId,
-      preferredTimes: preferredTimes,
+      attendee: attendee,
+      timesegments: timesegments,
     }),
   })
     .then((response) => {
