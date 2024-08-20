@@ -3,7 +3,7 @@ import { insertEvent } from './eventsUtils'
 import { create } from 'domain'
 
 export function createUser(name: string) {
-  fetch('/api/users/create', {
+  return fetch('/api/users/create', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -25,6 +25,7 @@ export function createUser(name: string) {
         localStorage.setItem('username', data[0].id)
       }
       console.log('Success:', data)
+      return data
     })
     .catch((error) => {
       console.error('Error:', error.message)

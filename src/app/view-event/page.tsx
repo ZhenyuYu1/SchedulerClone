@@ -1,17 +1,24 @@
 'use client'
 import { UUID } from 'crypto'
-import { Attendee, getAttendees } from '@/utils/attendeesUtils'
+import {
+  addAttendee,
+  Attendee,
+  getAttendees,
+  editAttendee,
+} from '@/utils/attendeesUtils'
 
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useEffect, useState, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { getEvent, Event } from '@/utils/eventsUtils'
 import { Schedule } from '@/utils/attendeesUtils'
+import { createUser } from '@/utils/userUtils'
 
 import Header from '@/components/Header'
 import EventView from '@/components/EventView'
 import EventCard from '@/components/EventCard'
 import Grid from '@/components/AvailabilityGrid'
 import Responses from '@/components/Responses'
+import { create } from 'domain'
 
 const ViewEvent = () => {
   const searchParams = useSearchParams()
@@ -20,15 +27,20 @@ const ViewEvent = () => {
   const [error, setError] = useState<string | null>(null)
   const [recentlyViewedEvents, setRecentlyViewedEvents] = useState<Event[]>([])
   const [schedule, setSchedule] = useState<Schedule>({})
+  const [userName, setUserName] = useState<string>('') // set to name entered when adding availability
+  const [userAvailability, setUserAvailability] = useState<Schedule>({}) // set to name entered when adding availability
 
   const [isAvailable, setIsAvailable] = useState(false) // set to true when name is entered at sign in
   const [isButtonsVisible, setIsButtonsVisible] = useState(false) // New state to control visibility of buttons
+  const [isNewUser, setIsNewUser] = useState(false) // New state to control visibility of buttons
+  const [isSignedIn, setIsSignedIn] = useState(false) // New state to control visibility of buttons
 
   const [responders, setResponders] = useState<Attendee[]>([]) // Set the responders state with the fetched data
   const [hoveredCell, setHoveredCell] = useState<{
     day: string
     time: string
   } | null>(null) // for cell hover in availability grid and responses
+  const dialogRef = useRef<HTMLDialogElement>(null) // modal
 
   // Callback Function to handle cell hover
   const handleCellHover = (day: string, time: string) => {
@@ -37,19 +49,22 @@ const ViewEvent = () => {
 
   // Converts the config object of days of the week to an array of strings
   const convertConfigToArray = (config: {
-    [key: string]: boolean
+    [key: string]: boolean | string[]
   }): string[] => {
     if (!config || typeof config !== 'object') {
       console.error('Invalid config:', config)
       return []
     }
-    return Object.keys(config).filter((day) => config[day])
+    return Array.isArray(config.days)
+      ? config.days
+      : Object.keys(config).filter((day) => config[day])
   }
 
   // gets attendee data from the API and formats it
   const formatAttendeeData = (attendees: Attendee[]): Attendee[] => {
     return attendees.map((attendee) => ({
       users: attendee.users, // Ensure this matches the expected structure
+      attendee: attendee.attendee, // Ensure this matches the expected structure
       timesegments: attendee.timesegments, // Ensure this matches the expected structure
     }))
   }
@@ -68,6 +83,7 @@ const ViewEvent = () => {
         }
 
         setEvent(newEvent)
+        // Update the recently viewed events in local storage
         if (!localStorage.getItem('FindingATimeRecentlyViewed')) {
           localStorage.setItem(
             'FindingATimeRecentlyViewed',
@@ -103,18 +119,64 @@ const ViewEvent = () => {
       .then((data) => {
         if (data) {
           //format attendee data
+          console.log('DATA: ', data)
           const formattedData = formatAttendeeData(data)
           setResponders(formattedData) // Set the responders state with the fetched data
         } else {
           setError('No attendees found')
         }
+        // If user is not an attendee of this event
+        // allow them to add availability
+        if (
+          !data.some(
+            (attendee: Attendee) =>
+              (attendee.attendee as UUID) ===
+              (localStorage.getItem('username') as UUID),
+          ) &&
+          !isSignedIn
+        ) {
+          console.log(
+            'New User PROBABLY BUG HERE ENTERING AGAIN WHEN USEEFFECT IS RETRIGGERD WHEN USERAVAILABILITY IS UPDATED',
+          )
+          setIsNewUser(true)
+          setIsSignedIn(false)
+        } else {
+          console.log('Old User')
+          setIsNewUser(false)
+          setIsSignedIn(true)
+          console.log(
+            'users availability: ',
+            data.find(
+              (attendee: Attendee) =>
+                (attendee.attendee as UUID) ===
+                (localStorage.getItem('username') as UUID),
+            )?.timesegments,
+          )
+          setSchedule(
+            data.find(
+              (attendee: Attendee) =>
+                (attendee.attendee as UUID) ===
+                (localStorage.getItem('username') as UUID),
+            )?.timesegments,
+          )
+        }
       })
-
       .catch((error) => {
         console.error('Error fetching attendees:', error.message)
         setError('Failed to load attendees')
       })
-  }, [eventId])
+    setIsAvailable(false)
+    console.log('User availability updated: ', userAvailability)
+  }, [eventId, userAvailability])
+
+  const openModal = () => {
+    if (dialogRef.current) {
+      dialogRef.current.showModal()
+    } else {
+      setIsAvailable(true)
+      setIsButtonsVisible(true)
+    }
+  }
 
   return (
     <div className="w-full">
@@ -159,21 +221,71 @@ const ViewEvent = () => {
               setConfig={event.setConfig}
               schedule={schedule}
               setSchedule={setSchedule}
+              userAvailability={userAvailability}
+              setUserAvailability={setUserAvailability}
               onCellHover={handleCellHover}
             />
           )}
           <div //button container for positioning "Save" and "Cancel" buttons
             className="flex flex-row justify-center gap-4 pt-8 "
           >
-            <button
-              className="btn btn-primary ml-4 rounded-full px-4 py-2 text-white"
-              onClick={() => {
-                setIsAvailable(true)
-                setIsButtonsVisible(true) // Show buttons when user signs in
-              }}
-            >
-              Edit My Availability
-            </button>
+            {isNewUser && !isSignedIn ? (
+              <div>
+                <button
+                  className="btn btn-primary ml-4 rounded-full px-4 py-2 text-white"
+                  onClick={() => {
+                    openModal()
+                  }}
+                >
+                  Add Availability
+                </button>
+              </div>
+            ) : (
+              !isNewUser &&
+              isSignedIn && (
+                <div>
+                  <button
+                    className="btn btn-primary ml-4 rounded-full px-4 py-2 text-white"
+                    onClick={() => {
+                      setIsAvailable(true)
+                      setIsButtonsVisible(true) // Show buttons when user signs in
+                    }}
+                  >
+                    Edit Availability
+                  </button>
+                </div>
+              )
+            )}
+            <dialog ref={dialogRef} id="username_modal" className="modal">
+              <div className="modal-box bg-white focus:outline-white ">
+                <h3 className="py-4 text-lg font-bold">Sign In</h3>
+                <input
+                  type="text"
+                  placeholder="Enter Your Name"
+                  className="input input-bordered w-full max-w-xs bg-white py-4"
+                  value={userName}
+                  onChange={(e) => {
+                    setUserName(e.target.value)
+                  }}
+                />
+
+                <div className="modal-action">
+                  <form method="dialog">
+                    <button
+                      className="btn btn-primary ml-4 rounded-full px-4 py-2 text-white"
+                      onClick={() => {
+                        setIsAvailable(true) // Update isAvailable to true when name is entered
+                        setIsButtonsVisible(true) // Show buttons when user signs in
+                        setUserName(userName)
+                        setIsSignedIn(true)
+                      }}
+                    >
+                      Sign In
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </dialog>
 
             {isButtonsVisible && (
               <>
@@ -182,13 +294,43 @@ const ViewEvent = () => {
                   onClick={() => {
                     setIsAvailable(false)
                     setIsButtonsVisible(false)
+                    setUserName('') // Reset username when user cancels
+                    if (!localStorage.getItem('username')) {
+                      setIsSignedIn(false)
+                    }
                   }} // Set availability selection mode to false when user cancels
                 >
                   Cancel
                 </button>
 
-                <button className="btn btn-primary rounded-full px-4 py-2 text-white">
-                  Save
+                <button
+                  className="btn btn-primary rounded-full px-4 py-2 text-white"
+                  onClick={() => {
+                    if (isNewUser) {
+                      console.log('Adding user: ', userName)
+                      createUser(userName).then((data) => {
+                        addAttendee(
+                          eventId as UUID,
+                          localStorage.getItem('username') as UUID,
+                          schedule,
+                        )
+                      })
+                    } else {
+                      editAttendee(
+                        eventId as UUID,
+                        localStorage.getItem('username') as UUID,
+                        schedule,
+                      )
+                    }
+                    setIsAvailable(false)
+                    setIsButtonsVisible(false)
+                    setIsSignedIn(true)
+                    setIsNewUser(false)
+                    setUserName('') // Reset username when user saves
+                    setUserAvailability(schedule)
+                  }}
+                >
+                  {isNewUser ? 'Add Availability' : 'Save'}
                 </button>
               </>
             )}

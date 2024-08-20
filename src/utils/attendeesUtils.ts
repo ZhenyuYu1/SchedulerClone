@@ -10,6 +10,14 @@ export interface Schedule {
   [date: string]: TimeSegment[]
 }
 
+export interface Attendee {
+  users: { name: string }
+  attendee: UUID
+  timesegments: {
+    [key: string]: TimeSegment[]
+  }
+}
+
 // const schedule: Schedule = {
 //   "Aug 10": [],
 //   "Aug 11": [
@@ -28,17 +36,6 @@ export interface Schedule {
 //   "Aug 15": []
 // };
 
-export interface Attendee {
-  users: { name: string }
-  timesegments: {
-    [key: string]: {
-      beginning: string
-      end: string
-      type: string
-    }[]
-  }
-}
-
 export async function getAttendees(eventid: UUID) {
   return fetch(`/api/attendees?eventid=${eventid}`, {
     method: 'GET',
@@ -55,7 +52,7 @@ export async function getAttendees(eventid: UUID) {
       return response.json()
     })
     .then((data) => {
-      console.log('Data: ', data)
+      console.log('Attendees: ', data)
       return data
     })
     .catch((error) => {
@@ -88,9 +85,43 @@ export async function addAttendee(
       return response.json()
     })
     .then((data) => {
-      console.log('Success:', data)
+      console.log('Success, attendee added:', data)
     })
     .catch((error) => {
       console.error('Error:', error.message)
+    })
+}
+
+export function editAttendee(
+  eventId: UUID,
+  attendee: UUID,
+  timesegments: Schedule,
+) {
+  return fetch('/api/attendees/edit', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      eventid: eventId,
+      attendee: attendee,
+      timesegments: timesegments,
+    }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        return response.json().then((err) => {
+          throw new Error(err.message)
+        })
+      }
+      return response.json()
+    })
+    .then((data) => {
+      console.log('Success, attendee edited:', data)
+      return data
+    })
+    .catch((error) => {
+      console.error('Error:', error.message)
+      return error
     })
 }

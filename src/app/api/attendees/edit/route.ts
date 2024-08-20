@@ -5,17 +5,17 @@ import { UUID } from 'crypto'
 
 export const runtime = 'edge'
 
-export async function GET(request: Request) {
+export async function PUT(request: Request) {
   const cookieStore = cookies()
   const supabase = createServerClient(cookieStore)
-
-  const url = new URL(request.url)
-  const eventid = url.searchParams.get('eventid')
+  const body = await request.json()
 
   const { data, error } = await supabase
     .from('attendees')
-    .select('users (name), attendee, timesegments')
-    .eq('eventid', eventid)
+    .update({ timesegments: body.timesegments })
+    .eq('eventid', body.eventid)
+    .eq('attendee', body.attendee)
+    .select()
 
   if (error) {
     return NextResponse.json({

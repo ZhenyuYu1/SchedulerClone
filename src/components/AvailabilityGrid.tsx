@@ -17,6 +17,8 @@ interface GridProps {
   setConfig: React.Dispatch<React.SetStateAction<string[]>>
   schedule: Schedule
   setSchedule: React.Dispatch<React.SetStateAction<Schedule>>
+  userAvailability?: Schedule
+  setUserAvailability?: React.Dispatch<React.SetStateAction<Schedule>>
   onCellHover?: (day: string, time: string) => void // Callback function when hovering over a cell
 }
 
@@ -65,12 +67,13 @@ const Grid = ({
   useEffect(() => {
     if (mode === 'weekly') {
       const order = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-      const sortedConfig = config.sort(
-        (a, b) => order.indexOf(a) - order.indexOf(b),
-      )
-      setDates(sortedConfig)
+      // const sortedConfig = config.sort(
+      //   (a, b) => order.indexOf(a) - order.indexOf(b),
+      // )
+      setDates(config)
+      // setDates(config)
+      // console.log('Dates config: ', config)
       setSchedule({})
-      console.log('Dates updated: ', sortedConfig)
     } else {
       // Sort dates in ascending order
       let newConfig = config
@@ -83,7 +86,6 @@ const Grid = ({
       )
       setDates(newConfig)
       setSchedule({})
-      console.log('Dates updated: ', newConfig)
     }
 
     // Only populate grid if in view mode and responder's time segments is not empty
