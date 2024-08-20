@@ -92,12 +92,12 @@ export async function addAttendee(
     })
 }
 
-export function editAttendee(
+export async function editAttendee(
   eventId: UUID,
   attendee: UUID,
   timesegments: Schedule,
 ) {
-  return fetch('/api/attendees/edit', {
+  return await fetch('/api/attendees/edit', {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',

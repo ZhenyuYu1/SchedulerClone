@@ -67,10 +67,12 @@ const Grid = ({
   useEffect(() => {
     if (mode === 'weekly') {
       const order = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-      // const sortedConfig = config.sort(
-      //   (a, b) => order.indexOf(a) - order.indexOf(b),
-      // )
-      setDates(config)
+      console.log('Time array before sort: ', timeArray)
+      const sortedConfig = config.sort(
+        (a, b) => order.indexOf(a) - order.indexOf(b),
+      )
+      setDates(sortedConfig)
+      console.log('Time array after sort: ', timeArray)
       // setDates(config)
       // console.log('Dates config: ', config)
       setSchedule({})
@@ -180,12 +182,12 @@ const Grid = ({
   const toggleCell = (rowIndex: number, colIndex: number) => {
     const newGrid = [...grid]
     newGrid[rowIndex][colIndex] = !newGrid[rowIndex][colIndex]
-    // console.log("Toggled cell at: ", rowIndex, colIndex)
-    // console.log("Date at colIndex: ", config[colIndex])
-    // console.log("Time at rowIndex: ", timeArray[rowIndex])
-    // console.log("Time at rowIndex + 1: ", timeArray[rowIndex + 1])
-    // console.log("Timearray: ", timeArray)
-    // console.log("config[colIndex]: ", config[colIndex])
+    console.log('Toggled cell at: ', rowIndex, colIndex)
+    console.log('Date at colIndex: ', config[colIndex])
+    console.log('Time at rowIndex: ', timeArray[rowIndex])
+    console.log('Time at rowIndex + 1: ', timeArray[rowIndex + 1])
+    console.log('Timearray: ', timeArray)
+    console.log('config[colIndex]: ', config[colIndex])
     const selectedTimeSegment = {
       beginning: timeArray[rowIndex],
       end: timeArray[rowIndex + 1],

@@ -12,6 +12,7 @@ import { useSearchParams } from 'next/navigation'
 import { getEvent, Event } from '@/utils/eventsUtils'
 import { Schedule } from '@/utils/attendeesUtils'
 import { createUser } from '@/utils/userUtils'
+import { days, months } from '@/utils/dateUtils'
 
 import Header from '@/components/Header'
 import EventView from '@/components/EventView'
@@ -29,6 +30,7 @@ const ViewEvent = () => {
   const [schedule, setSchedule] = useState<Schedule>({})
   const [userName, setUserName] = useState<string>('') // set to name entered when adding availability
   const [userAvailability, setUserAvailability] = useState<Schedule>({}) // set to name entered when adding availability
+  const [config, setConfig] = useState<string[]>([]) // set to name entered when adding availability
 
   const [isAvailable, setIsAvailable] = useState(false) // set to true when name is entered at sign in
   const [isButtonsVisible, setIsButtonsVisible] = useState(false) // New state to control visibility of buttons
@@ -57,7 +59,16 @@ const ViewEvent = () => {
     }
     return Array.isArray(config.days)
       ? config.days
-      : Object.keys(config).filter((day) => config[day])
+          .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
+          .map(
+            (date) =>
+              months[new Date(date).getMonth()] +
+              ' ' +
+              new Date(date).getDate(),
+          )
+      : Object.keys(config)
+          .filter((day) => config[day])
+          .sort((a, b) => days.indexOf(a) - days.indexOf(b)) // weekly
   }
 
   // gets attendee data from the API and formats it
@@ -78,6 +89,7 @@ const ViewEvent = () => {
           title: data[0].title,
           starttime: data[0].starttime,
           endtime: data[0].endtime,
+          location: data[0].location,
           config: data[0].config || {},
           mode: data[0].mode || 'weekly', // TODO: need to modify to include both weekly & specific dates
         }
@@ -193,8 +205,7 @@ const ViewEvent = () => {
               title={event.title}
               starttime={event.starttime}
               endtime={event.endtime}
-              days={null}
-              date={null}
+              location={event.location}
               key={event.id}
             />
           )}
@@ -218,7 +229,7 @@ const ViewEvent = () => {
               responders={responders}
               mode={event.mode}
               config={convertConfigToArray(event.config)}
-              setConfig={event.setConfig}
+              setConfig={setConfig}
               schedule={schedule}
               setSchedule={setSchedule}
               userAvailability={userAvailability}
@@ -242,7 +253,8 @@ const ViewEvent = () => {
               </div>
             ) : (
               !isNewUser &&
-              isSignedIn && (
+              isSignedIn &&
+              !isButtonsVisible && (
                 <div>
                   <button
                     className="btn btn-primary ml-4 rounded-full px-4 py-2 text-white"
@@ -313,21 +325,29 @@ const ViewEvent = () => {
                           eventId as UUID,
                           localStorage.getItem('username') as UUID,
                           schedule,
-                        )
+                        ).then(() => {
+                          setIsAvailable(false)
+                          setIsButtonsVisible(false)
+                          setIsSignedIn(true)
+                          setIsNewUser(false)
+                          setUserName('') // Reset username when user saves
+                          setUserAvailability(schedule)
+                        })
                       })
                     } else {
                       editAttendee(
                         eventId as UUID,
                         localStorage.getItem('username') as UUID,
                         schedule,
-                      )
+                      ).then(() => {
+                        setIsAvailable(false)
+                        setIsButtonsVisible(false)
+                        setIsSignedIn(true)
+                        setIsNewUser(false)
+                        setUserName('') // Reset username when user saves
+                        setUserAvailability(schedule)
+                      })
                     }
-                    setIsAvailable(false)
-                    setIsButtonsVisible(false)
-                    setIsSignedIn(true)
-                    setIsNewUser(false)
-                    setUserName('') // Reset username when user saves
-                    setUserAvailability(schedule)
                   }}
                 >
                   {isNewUser ? 'Add Availability' : 'Save'}

@@ -18,7 +18,7 @@ export default function LandingPage() {
       <Header />
       <div className="mb-0 mt-10 pb-0">
         <Intro />
-        <Image src={ViewingPage} alt="Viewing Page" className="mx-auto w-1/2" />
+        <Image src={ViewingPage} alt="Viewing Page" className="mx-auto" />
         <Tutorial />
         <FAQ />
       </div>

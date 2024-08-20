@@ -13,7 +13,7 @@ import Link from 'next/link'
 import { Event, getMyEvents } from '@/utils/eventsUtils'
 
 export default function Index() {
-  const [myEvents, setMyEvents] = useState<any[]>([])
+  const [myEvents, setMyEvents] = useState<Event[]>([])
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -66,8 +66,7 @@ export default function Index() {
                       title={event.title}
                       starttime={event.starttime}
                       endtime={event.endtime}
-                      date={null}
-                      days={null}
+                      location={event.location}
                       key={event.id}
                     />
                   ))}
@@ -91,8 +90,7 @@ export default function Index() {
                     title={event.title}
                     starttime={event.starttime}
                     endtime={event.endtime}
-                    date={null}
-                    days={null}
+                    location={event.location}
                     key={event.id}
                   />
                   <div className="mb-4"></div>
