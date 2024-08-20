@@ -27,7 +27,6 @@ export async function getAttendees(eventid: UUID) {
       return response.json()
     })
     .then((data) => {
-      console.log('Data: ', data)
       return data
     })
     .catch((error) => {

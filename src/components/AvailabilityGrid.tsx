@@ -38,7 +38,7 @@ const Grid = ({
 
   // Grid dimensions
   const dimensions = {
-    width: config.length || 1, // default to 1 if daysOfWeek is empty
+    width: config?.length || 1, // default to 1 if daysOfWeek is empty
     height: timeArray.length,
   }
 
