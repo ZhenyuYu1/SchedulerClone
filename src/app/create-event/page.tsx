@@ -28,18 +28,17 @@ export default function CreateEvent() {
 
   useEffect(() => {
     // Check if user is signed in
-    getUser(localStorage.getItem('username') as UUID)
-      .then((data) => {
-        if (data) {
-          setUserName(data[0].name)
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error.message)
-      })
-
     if (localStorage.getItem('username')) {
       setUserName(localStorage.getItem('username') as string)
+      getUser(localStorage.getItem('username') as UUID)
+        .then((data) => {
+          if (data) {
+            setUserName(data[0].name)
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error.message)
+        })
     }
   }, [])
 
@@ -63,7 +62,6 @@ export default function CreateEvent() {
 
   // Create Event Button function
   const handleSubmit = async () => {
-    console.log('Username: ', userName)
     const daysOfWeekJSON: { [key: string]: boolean } = {
       Mon: false,
       Tue: false,
@@ -120,7 +118,6 @@ export default function CreateEvent() {
   // Function to open modal for after clicking "Sign In"
   const openModal = () => {
     if (dialogRef.current && userName === '') {
-      console.log('Opening modal')
       dialogRef.current.showModal()
     } else {
       setIsAvailable(true)

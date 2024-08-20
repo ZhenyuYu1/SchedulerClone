@@ -53,31 +53,35 @@ export default function Index() {
                 <button className="btn btn-primary ml-6">+ New Event</button>
               </Link>
             </div>
-            {isLoading ? (
-              <p>Loading...</p>
-            ) : myEvents.length > 0 ? (
-              <div className="grid grid-cols-3 gap-4">
-                {myEvents.map((event) => (
-                  <EventCard
-                    eventId={event.id}
-                    title={event.title}
-                    starttime={event.starttime}
-                    endtime={event.endtime}
-                    date={null}
-                    days={null}
-                    key={event.id}
-                  />
-                ))}
-              </div>
-            ) : (
-              <p>No events found. Press &apos;New Event&apos; to create one!</p>
-            )}
+            {!isLoading &&
+              (myEvents.length === 0 ? (
+                <p>
+                  No events found. Press &apos;New Event&apos; to get started!
+                </p>
+              ) : (
+                <div className="grid grid-cols-3 gap-4">
+                  {myEvents.map((event) => (
+                    <EventCard
+                      eventId={event.id}
+                      title={event.title}
+                      starttime={event.starttime}
+                      endtime={event.endtime}
+                      date={null}
+                      days={null}
+                      key={event.id}
+                    />
+                  ))}
+                </div>
+              ))}
           </div>
+          {isLoading && (
+            <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75">
+              <span className="loading loading-dots loading-lg"></span>
+            </div>
+          )}
           <div className="w-1/4 border-l border-gray-300 bg-white p-4 pl-8">
             <h1 className="mb-4 text-xl font-bold">Recently Viewed Events</h1>
-            {isLoading ? (
-              <p>Loading...</p>
-            ) : upcomingEvents.length === 0 ? (
+            {!isLoading && upcomingEvents.length === 0 ? (
               <p>No recently viewed events.</p>
             ) : (
               upcomingEvents.map((event) => (
