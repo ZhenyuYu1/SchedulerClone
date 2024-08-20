@@ -167,7 +167,6 @@ const EventForm = ({
                   console.log(value)
                   const dateValue = (value as Date).toString()
                   let newSpecificDays = config
-                  console.log('Old specific days: ', config)
                   if (
                     !config?.some((day) => day === dateValue) &&
                     config.length < 7
@@ -178,7 +177,6 @@ const EventForm = ({
                     setConfig(newSpecificDays)
                   } else {
                     // Remove the value date from the specificDays array
-                    console.log('Removing date: ', dateValue)
                     newSpecificDays = newSpecificDays.filter(
                       (day) => day !== dateValue,
                     )
@@ -200,7 +198,6 @@ const EventForm = ({
                   } else {
                     setPassSpecificDaysLimitMessage('')
                   }
-                  console.log('New specific days: ', newSpecificDays)
                 }}
                 tileClassName={({ activeStartDate, date, view }) => {
                   if (Date.now() > date.getTime()) {

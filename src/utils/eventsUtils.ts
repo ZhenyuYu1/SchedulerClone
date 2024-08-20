@@ -6,6 +6,7 @@ export interface Event {
   title: string
   starttime: string
   endtime: string
+  location: string
   config: { [key: string]: boolean }
   mode: string
 }

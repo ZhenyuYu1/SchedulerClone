@@ -11,17 +11,29 @@ export default function Tutorial() {
       </h1>
       <ol className="list-inside list-decimal text-xl">
         <li>
-          Create a new Finding a Time event at &apos;Create Event&apos; using
-          the events form
+          Create a new Finding a Time event by clicking the
+          <Link href="/create-event">
+            <button className="btn btn-primary btn-sm mx-3">
+              Create Event
+            </button>
+          </Link>
+          button
         </li>
         <li>Fill in the event details</li>
         <li>Add your availability.</li>
         <li>Share the provided link with participants</li>
-        <li>View and edit your events from the &apos;Dashboard&apos;</li>
+        <li>
+          View and edit your events from the
+          <Link href="/home">
+            <button className="btn btn-primary btn-sm mx-3">Dashboard</button>
+          </Link>
+        </li>
       </ol>
       <div className="mt-4">
         <Link href="/home">
-          <button className="btn btn-primary">Get Started</button>
+          <button className="btn btn-primary">
+            Get Started By Creating Your First Event
+          </button>
         </Link>
       </div>
     </div>
