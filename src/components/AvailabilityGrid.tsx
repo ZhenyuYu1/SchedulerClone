@@ -36,6 +36,7 @@ const Grid = ({
 }: GridProps) => {
   // Generate time array for row headings
   const timeArray = generateTimeRange(earliestTime, latestTime)
+  const respondentCount = responders?.length || 0
 
   // Grid dimensions
   const dimensions = {
@@ -302,7 +303,11 @@ const Grid = ({
                 <div
                   key={`${rowIndex}-${colIndex}`}
                   className={`flex h-16 items-center justify-center border-[0.5px] border-gray-200 ${
-                    isSelected ? 'bg-emerald-300' : ''
+                    isSelected
+                      ? isSelected === (responders?.length || 0)
+                        ? 'bg-emerald-600'
+                        : 'bg-emerald-300'
+                      : ''
                   } ${
                     // Change cursor to pointer if grid is selectable
                     isAvailable ? 'cursor-pointer' : 'cursor-default'
