@@ -239,12 +239,20 @@ const EventForm = ({
           <option disabled value="">
             Timezone
           </option>
-          <option>PST (Pacific Standard Time)</option>
-          <option>EST (Eastern Standard Time)</option>
-          <option>GMT (Greenwich Mean Time)</option>
-          <option>CET (Central European Time)</option>
-          <option>IST (Indian Standard Time)</option>
-          <option>JST (Japan Standard Time)</option>
+          <option value="PST">PST (Pacific Standard Time)</option>
+          <option value="MST">MST (Mountain Standard Time)</option>
+          <option value="CST">CST (Central Standard Time)</option>
+          <option value="EST">EST (Eastern Standard Time)</option>
+          <option value="AKST">AKST (Alaska Standard Time)</option>
+          <option value="HST">HST (Hawaii-Aleutian Standard Time)</option>
+          <option value="GMT">GMT (Greenwich Mean Time)</option>
+          <option value="CET">CET (Central European Time)</option>
+          <option value="EET">EET (Eastern European Time)</option>
+          <option value="CST">CST (China Standard Time)</option>
+          <option value="AST">AST (Atlantic Standard Time)</option>
+          <option value="IST">IST (Indian Standard Time)</option>
+          <option value="JST">JST (Japan Standard Time)</option>
+          <option value="AEST">AEST (Australian Eastern Standard Time)</option>
         </select>
       </form>
     </>
